@@ -2,9 +2,9 @@ module Admin
   class PagesController < Admin::BaseController
 
     crudify :page,
-            :conditions => nil,
-            :order => "lft ASC",
-            :include => [:slugs, :translations, :children],
+            :conditions => nil, # only pages this users can access
+            :order => "pages.lft ASC",
+            :include => [:slugs, :translations, :children, :users],
             :paging => false
 
     rescue_from FriendlyId::ReservedError, :with => :show_errors_for_reserved_slug
@@ -14,14 +14,19 @@ module Admin
     before_filter :restrict_access, :only => [:create, :update, :update_positions, :destroy], :if => proc {|c|
       ::Refinery.i18n_enabled?
     }
+    
+    before_filter :update_users, :only => [:create, :update]
 
     def new
       @page = Page.new
-      Page.default_parts.each_with_index do |page_part, index|
-        @page.parts << PagePart.new(:title => page_part, :position => index)
-      end
     end
-
+    
+    def find_all_pages(conditions = {})
+      conditions.merge!({"users.id" => current_user.id}) unless current_user.has_role?(:superuser)
+      @pages = Page.where(conditions).includes(
+                    [:slugs, :translations, :children, :users]).order("pages.lft ASC")
+    end
+  
   protected
 
     # We can safely assume Refinery::I18n is defined because this method only gets
@@ -63,6 +68,10 @@ module Admin
 
       return true
     end
-
+    
+    def update_users
+      @page.users = (User.find(params[:page][:users]) rescue [])
+      params[:page][:users] = nil
+    end
   end
 end

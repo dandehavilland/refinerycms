@@ -1,14 +1,18 @@
 module Admin
   class PagePartsController < Admin::BaseController
-
+    
     def new
-      render :partial => "/admin/pages/page_part_field", :locals => {
-        :part => PagePart.new(:title => params[:title], :body => params[:body]),
+      @prefix = "page[parts_attributes][#{params[:part_index]}]"
+      part = PagePart.new(:title => params[:title], :index => params[:part_index], :meta => {:type => params[:type]})
+      part.items << params[:type].constantize.new
+      
+      render :partial => "/admin/pages/insert_page_part_field", :locals => {
+        :part => part,
         :new_part => true,
         :part_index => params[:part_index]
       }
     end
-
+    
     def destroy
       part = PagePart.find(params[:id])
       page = part.page

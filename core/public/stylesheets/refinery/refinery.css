@@ -48,6 +48,8 @@ label[for] {
 input.widest, textarea.widest {
   width: 99%;
 }
+textarea.code {
+  font-family: monospace; }
 select.widest {
   max-width: 99%;
 }
@@ -1049,7 +1051,7 @@ a img {
 
 ul#page_parts {
   float: left;
-  width: 94%;
+  width: 92%;
 }
 ul#page_parts, ul#page_parts_controls {
   margin: 20px 0 0 0;
@@ -1057,7 +1059,7 @@ ul#page_parts, ul#page_parts_controls {
 }
 ul#page_parts_controls {
   float: right;
-  width: 5%;
+  width: 7%;
   margin-right: 3px;
 }
 ul#page_parts_controls li {
@@ -1584,4 +1586,84 @@ a.information:hover {
 }
 .ie8 .pagination a, .ie8 #content .pagination a, .ie8 .pagination .current, .ie8 .disabled, .ie8 .pagination em {
   padding-bottom: 6px;
+}
+
+
+/* Additional styles for custom backend additions - where should these go? */
+section#items {
+  width: 600px;
+}
+.page_part {
+  padding: 5px 10px;
+  background-color: #eee;
+}
+.items {
+  width: 67%;
+}
+
+#actions li {
+  position: relative;
+}
+#actions li a.remove_item {
+  background: none; padding: 0; border: 0;
+  position: absolute;
+  right: 10px; top: 10px;
+}
+
+.part_items_controls {
+  height: 30px;
+}
+.part_items_controls a {
+  display: block;
+  position: relative;
+  padding-right: 20px;
+  padding-left: 23px;
+  padding-top: 4px;
+}
+.part_items_controls a img {
+  position: absolute;
+  top: 3px; left: 3px;
+}
+
+#page-tabs .placeholder {
+  list-style-type: none;float: left;
+}
+
+ul.items {
+  list-style-type: none;
+  padding: 0; margin: 7px 0 0;
+}
+
+ul.items .item.record {
+  margin-bottom: 10px;
+}
+
+ul.items .item.record .record_header {
+  padding: 9px;
+  background: #ddd;
+  border: 1px solid #888;
+}
+
+ul.items .item.record .record_header .record_controls {
+  float: right;
+}
+
+ul.items .item.record .record_fields {
+  display: block;
+  background: #FEFEFE;
+  margin: 0;
+  padding: 1px 10px 20px;
+  border: 1px solid #CCC;
+  border-top: none;
+}
+.user_list {
+  padding: 5px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background: #fefefe;
+}
+#content .part_items_controls li a {
+  border: 1px solid #65C3F7;
 }

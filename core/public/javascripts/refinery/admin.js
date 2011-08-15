@@ -690,7 +690,7 @@ var page_options = {
       resizable: false,
       autoOpen: false,
       width: 600,
-      height: 200
+      height: 250
     });
 
     $('#add_page_part').click(function(e){
@@ -711,6 +711,7 @@ var page_options = {
               title: part_title
               , part_index: $('#new_page_part_index').val()
               , body: ''
+              , type: $('#new_page_part_meta_type').val()
             }, function(data, status){
               $('#submit_continue_button').remove();
               // Add a new tab for the new content section.
