@@ -5,27 +5,59 @@
                :object => @image,
                :include_object_name => false
              } %>
+   <div class='field'>
+     <label><%= t('.maximum_image_size', :megabytes => Image::MAX_SIZE_IN_MB) %></label>
+   </div>
+
+   <input type='hidden' name='wymeditor' value='<%= params[:wymeditor] %>'>
 
   <div class='field'>
     <% if action_name =~ /(edit)|(update)/ %>
-      <p>
-        <%= t('.use_current_image') %>
-        <em><%= t('.or') %></em><%= t('.replace_image') %>
-      </p>
-      <p>
-        <%= f.file_field :image %>
-      </p>
+     <p>
+       <%= t('.use_current_image') %>
+       <em><%= t('.or') %></em><%= t('.replace_image') %>
+     </p>
+     <p>
+       <%= f.file_field :image %>
+     </p>
     <% else %>
-      <% # we must only hint at multiple when it's a new record otherwise update fails. %>
-      <%= f.file_field :image, :multiple => true %>
+     <% # we must only hint at multiple when it's a new record otherwise update fails. %>
+     <%= f.file_field :image, :multiple => true %>
     <% end %>
   </div>
+  
+             
 
-  <div class='field'>
-    <label><%= t('.maximum_image_size', :megabytes => Image::MAX_SIZE_IN_MB) %></label>
+  <% if action_name =~ /(edit)|(update)/ %>
+  <div class='field' id="cropper_container">
+    <label><%= t(".crop_image") %></label>
+    <%= image_tag @image.thumbnail("960x720#").url, :id => 'cropbox' %>
   </div>
-
-  <input type='hidden' name='wymeditor' value='<%= params[:wymeditor] %>'>
+  
+  <div class='field'>
+    <label>Size:</label>
+    <select name="crop_size"> 
+    <%- RefinerySetting[:user_image_sizes].each_pair do |pair| %>
+    <option value="<%=pair.last%>" rel="<%=@image.thumbnail(pair.last).url%>"><%=pair.first.to_s.humanize%></option>
+    <% end -%>
+    <%- [:h,:w,:x,:x2,:y,:y2].each do |dimension| %>
+      <%= hidden_field "crop[dimensions]", dimension %>
+    <% end -%>
+  </div>
+  <div class='field'>
+    <div id="current_crop" class="crop_preview_image">
+      <label>Current Crop</label>
+      <%= image_tag @image.thumbnail(:"1_x_1").url %>
+    </div>
+    
+    <div id="crop_preview" class="crop_preview_image">
+      <label>New Crop</label>
+      <div class="crop_preview_wrapper">
+        <%= image_tag @image.thumbnail("960x700#").url %>
+      </div>
+    </div>
+  </div>
+  <% end -%>
 
   <%= render :partial => "/shared/admin/form_actions",
              :locals => {
@@ -47,8 +79,77 @@
 <% end %>
 
 <% if action_name =~ /(edit)|(update)/ %>
-  <div id='existing_image'>
-    <label><%=t('.current_image') %></label>
-    <%= image_fu @image, '225x255>', :class => "brown_border" %>
-  </div>
-<% end %>
+
+  <% content_for :javascripts do %>
+  <%= javascript_include_tag 'jcrop.min' %>
+  <%= stylesheet_link_tag 'jquery.jcrop' %>
+  <script language="Javascript">
+  var aspect_ratio, width, height, image;
+
+  $(function() {
+
+    function update_aspect_ratio() {
+      var sizes = $("[name=crop_size]").val().match(/([\d]{1,4})x([\d]{1,4}).*/);
+      width = sizes[1];
+      height = sizes[2];
+      aspect_ratio = width / height;
+    
+      $('#cropbox').Jcrop({
+        setSelect: [ 240, 240, width, height ],
+        aspectRatio: aspect_ratio,
+        onChange: update_crop_values
+      });
+    
+      update_current_crop();
+    }
+  
+    function update_current_crop() {
+      var url = $("[name=crop_size] :selected").attr('rel');
+      $("#current_crop img").attr('src', url);
+    }
+  
+    function update_crop_values(dimensions) {
+      for (var param in dimensions)
+        $("[name='crop[dimensions]["+param+"]']").attr('value', dimensions[param]);
+    
+      update_preview(dimensions);
+    }
+  
+    function update_preview(dimensions) {
+      var cropper_image = $("#cropbox"),
+          cropper_width = cropper_image.width(),
+          cropper_height = cropper_image.height();
+    
+      var target_width = dimensions.w,
+          target_height = dimensions.h;
+    
+      // set the size of the preview container to that selected in the drop-down
+      var preview_container = $(".crop_preview_wrapper");
+      preview_container.css({width: width, height: height});
+    
+      // set the size of the preview image to proportionally match the crop
+      var preview_image = $("img", preview_container),
+          preview_image_width = preview_image.width(),
+          preview_image_height = preview_image.height();
+    
+      var target_preview_width = (width / target_width) * cropper_width,
+          target_preview_height = (height / target_height) * cropper_height;
+    
+      preview_image.attr('width', target_preview_width).attr('height', target_preview_height);
+    
+      // reposition the preview image to refelct the start of the crop
+      var target_left = dimensions.x,
+          target_top = dimensions.y,
+          target_preview_left = (target_left / cropper_width) * target_preview_width,
+          target_preview_right = (target_top / cropper_height) * target_preview_height;
+      preview_image.css({left: -target_preview_left, top: -target_preview_right});
+    }
+  
+    $("[name=crop_size]").change(update_aspect_ratio);
+    update_aspect_ratio();
+  
+  });
+
+  </script>
+  <% end %>
+<% end -%>
