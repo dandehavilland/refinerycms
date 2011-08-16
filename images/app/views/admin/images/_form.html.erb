@@ -31,7 +31,7 @@
   <% if action_name =~ /(edit)|(update)/ %>
   <div class='field' id="cropper_container">
     <label><%= t(".crop_image") %></label>
-    <%= image_tag @image.thumbnail("960x720#").url, :id => 'cropbox' %>
+    <%= image_tag @image.thumbnail("960x720>").url, :id => 'cropbox' %>
   </div>
   
   <div class='field'>
@@ -53,7 +53,7 @@
     <div id="crop_preview" class="crop_preview_image">
       <label>New Crop</label>
       <div class="crop_preview_wrapper">
-        <%= image_tag @image.thumbnail("960x700#").url %>
+        <%= image_tag @image.thumbnail("960x720>").url %>
       </div>
     </div>
   </div>
