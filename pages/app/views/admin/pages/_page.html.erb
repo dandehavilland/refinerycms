@@ -8,7 +8,7 @@
           <% (::Refinery::I18n.frontend_locales).each do |locale| %>
             <% image = "flags/#{locale}.png"%>
             <%= link_to refinery_icon_tag(image, :size => '16x11'),
-                        edit_admin_item_path(page, :switch_locale => locale),
+                        edit_admin_page_path(page, :switch_locale => locale),
                         :class => "locale #{"missing_locale" unless locales.include?(locale)}" %>
           <% end %>
         </span>
