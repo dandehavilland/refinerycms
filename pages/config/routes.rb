@@ -3,6 +3,9 @@
 
   scope(:path => 'refinery', :as => 'admin', :module => 'admin') do
     resources :pages, :except => :show do
+      member do
+        get :preview
+      end
       collection do
         post :update_positions
       end
