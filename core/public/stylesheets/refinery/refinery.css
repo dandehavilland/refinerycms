@@ -1670,3 +1670,32 @@ ul.items .item.record .record_fields {
 #content .part_items_controls li a {
   border: 1px solid #65C3F7;
 }
+
+
+.add_item_dialog table {
+  width: 100%;
+  border-collapse:collapse;
+  border-spacing: 0;
+}
+.add_item_dialog table td, .add_item_dialog table th {
+  padding: 2px 5px 1px;
+  line-height: 28px;
+}
+.add_item_dialog table thead th {
+  text-align: left;
+  background: #dedede;
+  border-bottom: 1px solid #555;
+}
+.add_item_dialog table td {
+  background: #efefef;
+  border-bottom: 1px solid #aaa;
+}
+.add_item_dialog .form-actions-dialog {
+  background: #eee;
+  position: absolute;
+  padding: 5px;
+  width: 590px;
+  bottom: 0;
+  left: 0;
+  border-top: 2px solid #999;
+}

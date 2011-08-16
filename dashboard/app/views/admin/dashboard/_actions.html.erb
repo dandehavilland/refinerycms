@@ -1,4 +1,9 @@
 <ul>
+  <% if Refinery::Plugins.active.names.include?("flat_caches") %>
+    <li>
+      <%= link_to t('.publish_site'), "#", :class => "success_icon" %>
+    </li>
+  <% end %>
   <% if Refinery::Plugins.active.names.include?("refinery_pages") %>
     <li>
       <%= link_to t('.add_a_new_page'),
