@@ -26,6 +26,9 @@ module Admin
       @pages = Page.where(conditions).includes(
                     [:slugs, :translations, :children, :users]).order("pages.lft ASC")
     end
+    
+    def preview
+    end
   
   protected
 
