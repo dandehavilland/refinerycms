@@ -15,7 +15,7 @@ module Admin
       ::Refinery.i18n_enabled?
     }
     
-    before_filter :update_users, :only => [:create, :update]
+    after_filter :update_users, :only => [:create, :update]
 
     def new
       @page = Page.new
@@ -70,8 +70,10 @@ module Admin
     end
     
     def update_users
-      @page.users = (User.find(params[:page][:users]) rescue [])
-      params[:page][:users] = nil
+      if (@page)
+        @page.users = (User.find(params[:page][:users]) rescue [])
+        params[:page][:users] = nil
+      end
     end
   end
 end
