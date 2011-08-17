@@ -1699,3 +1699,7 @@ ul.items .item.record .record_fields {
   left: 0;
   border-top: 2px solid #999;
 }
+
+.item textarea.widest {
+  width: 600px;
+}
