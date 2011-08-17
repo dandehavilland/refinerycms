@@ -29,5 +29,11 @@ class PagesController < ApplicationController
       error_404
     end
   end
+  
+  def preview
+    @page = Page.new(params[:page])
+    error_404 and return unless @page.try(:live?) || (refinery_user? && current_user.authorized_plugins.include?("refinery_pages"))
+    render 'show'
+  end
 
 end
