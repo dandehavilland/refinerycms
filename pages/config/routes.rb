@@ -1,11 +1,9 @@
 ::Refinery::Application.routes.draw do
   get '/pages/:id', :to => 'pages#show', :as => :page
+  get '/pages/:id/preview', :to => 'pages#preview', :as => :page
 
   scope(:path => 'refinery', :as => 'admin', :module => 'admin') do
     resources :pages, :except => :show do
-      member do
-        get :preview
-      end
       collection do
         post :update_positions
       end

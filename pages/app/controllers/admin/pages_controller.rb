@@ -1,6 +1,6 @@
 module Admin
   class PagesController < Admin::BaseController
-
+    helper :copywriting
     crudify :page,
             :conditions => nil, # only pages this users can access
             :order => "pages.lft ASC",
@@ -25,9 +25,6 @@ module Admin
       conditions.merge!({"users.id" => current_user.id}) unless current_user.has_role?(:superuser)
       @pages = Page.where(conditions).includes(
                     [:slugs, :translations, :children, :users]).order("pages.lft ASC")
-    end
-    
-    def preview
     end
   
   protected
