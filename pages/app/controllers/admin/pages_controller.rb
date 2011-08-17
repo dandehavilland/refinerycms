@@ -16,6 +16,8 @@ module Admin
     }
     
     after_filter :update_users, :only => [:create, :update]
+    
+    after_filter :destroy_preview, :only => [:preview]
 
     def new
       @page = Page.new
@@ -28,6 +30,7 @@ module Admin
     end
     
     def preview
+      @page = Page.new(params[:page])
     end
   
   protected

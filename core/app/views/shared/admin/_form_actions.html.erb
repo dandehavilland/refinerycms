@@ -59,7 +59,7 @@
     <%- #preview_admin_page_path(f.object) %>
     <%= link_to("Preview", "#", 
                 :title => "Preview changes before saving", 
-                :class => "preview button") unless (f.nil? || f.object.is_a?(Page)) -%>
+                :class => "preview button") if (f.present? && f.object.is_a?(Page)) -%>
 
     <%= link_to(cancel_button_text, cancel_url,
                 :title => cancel_title,

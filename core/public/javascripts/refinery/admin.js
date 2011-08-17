@@ -724,6 +724,10 @@ var page_options = {
                 $('#page_part_new_' + $('#new_page_part_index').val()).appendTo('#page_part_editors');
                 page_options.tabs.tabs('select', $('#new_page_part_index').val());
               });
+              
+              if (setup_pickers !== undefined) {
+                setup_pickers($(".items", $("#page_part_new_"+$('#new_page_part_index').val())));
+              }
 
               // turn the new textarea into a wymeditor.
               WYMeditor.init();
@@ -733,6 +737,9 @@ var page_options = {
               $('#new_page_part_title').val('');
 
               page_options.tabs.find('> ul li a').corner('top 5px');
+
+              init_modal_dialogs();
+              
 
               $('#new_page_part_dialog').dialog('close');
             }
