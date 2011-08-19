@@ -9,6 +9,7 @@ module Admin
             :xhr_paging => true
 
     before_filter :change_list_mode_if_specified, :init_dialog
+    before_filter :verify_can_destroy, :only => :destroy
 
     def new
       @image = Image.new if @image.nil?
@@ -79,7 +80,15 @@ module Admin
     end
 
   protected
-
+  
+    protected
+    def verify_can_destroy
+      if @image.uses.count > 0
+        flash[:error] = t('admin.images.image_in_use_can_not_delete')
+        redirect_to :action => :index
+      end
+    end
+    
     def init_dialog
       @app_dialog = params[:app_dialog].present?
       @field = params[:field]
