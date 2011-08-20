@@ -55,32 +55,31 @@ class Image < ActiveRecord::Base
 
   # Get a thumbnail job object given a geometry.
   def thumbnail(geometry = nil)
-    if is_a_stored_geometry?(geometry)
-      geometry = self.class.user_image_sizes[geometry] 
-    elsif is_a_crop_geometry?(geometry)
-      
+    
+    method = :thumb
+    
+    geometry = if is_a_crop_geometry?(geometry)
+      method = :convert
+      self.crops[geometry]
+    elsif is_a_stored_geometry?(geometry)
+      self.class.user_image_sizes[geometry] 
+    else
+      geometry
     end
     
-    
-    if geometry.present? && !geometry.is_a?(Symbol)
-      image.thumb(geometry)
+    if geometry.present? and not geometry.is_a?(Symbol)
+      image.send method, geometry
     else
       image
     end
   end
   
-  def define_crop(crop_geometry = nil, related_geometry = nil)
-    
-    key = if is_a_stored_geometry?(related_geometry)
-      related_geometry
-    else
-      crop_geometry.to_s
-    end
+  def define_crop(geometry_name = nil, geometry_params = nil)
     crops[key] = crop_geometry
   end
   
   def crops
-    meta[:crops] ||= {}
+    (meta||={})[:crops] ||= {}
   end
   
   # Returns a titleized version of the filename
