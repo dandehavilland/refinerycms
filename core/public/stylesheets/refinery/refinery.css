@@ -1613,9 +1613,6 @@ section#items {
   right: 10px; top: 10px;
 }
 
-.part_items_controls {
-  height: 30px;
-}
 .part_items_controls a {
   display: block;
   position: relative;
@@ -1702,4 +1699,37 @@ ul.items .item.record .record_fields {
 
 .item textarea.widest {
   width: 600px;
+}
+.loading-spinner {
+  display: none;
+  position: relative;
+  left: 3px;
+  top: 4px;
+}
+
+.uses_dialog p {
+  font-style: italic;
+  font-size: 10px;
+  line-height: 13px;
+  padding: 0 10px;
+}
+
+ul.uses, ul.uses ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px;
+}
+
+ul.uses ul {
+  margin-top: 3px;
+  padding-left: 5px;
+}
+
+.locale_picker {
+  margin-bottom: 10px;
+}
+.locale_picker ul li {
+  background: none !important;
+  padding: 0 !important;
+  margin: 0 12px 0 0! important;
 }
