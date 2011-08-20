@@ -16,8 +16,6 @@ module Admin
     }
     
     after_filter :update_users, :only => [:create, :update]
-    
-    after_filter :destroy_preview, :only => [:preview]
 
     def new
       @page = Page.new
@@ -28,9 +26,84 @@ module Admin
       @pages = Page.where(conditions).includes(
                     [:slugs, :translations, :children, :users]).order("pages.lft ASC")
     end
+    
+    def create
+      # if the position field exists, set this object as last object, given the conditions of this class.
+      if Page.column_names.include?("position")
+        params[:page].merge!({
+          :position => ((Page.maximum(:position)||-1) + 1)
+        })
+      end
+      
+      if (@page = Page.create(params[:page])).valid?
+        (request.xhr? ? flash.now : flash).notice = t(
+          'refinery.crudify.created',
+          :what => "'#{@page.title}'")
+
+        unless from_dialog?
+          unless params[:continue_editing] =~ /true|on|1/
+            redirect_back_or_default(admin_pages_path)
+          else
+            unless request.xhr?
+              redirect_to :back
+            else
+              render :partial => "/shared/message"
+            end
+          end
+        else
+          render :text => "<script>parent.window.location = '#{admin_pages_path}';</script>"
+        end
+      else
+        unless request.xhr?
+          render :action => 'new'
+        else
+          render :partial => "/shared/admin/error_messages",
+                 :locals => {
+                   :object => @page,
+                   :include_object_name => true
+                 }
+        end
+      end
+    end
+    
+    def update
+      if @page.update_attributes(params[:page])
+        (request.xhr? ? flash.now : flash).notice = t(
+          'refinery.crudify.updated',
+          :what => "'#{@page.title}'"
+        )
+
+        unless from_dialog?
+          unless params[:continue_editing] =~ /true|on|1/
+            redirect_back_or_default(admin_pages_path)
+          else
+            unless request.xhr?
+              redirect_to :back
+            else
+              render :partial => "/shared/message"
+            end
+          end
+        else
+          render :text => "<script>parent.window.location = '#{admin_pages_path}';</script>"
+        end
+      else
+        unless request.xhr?
+          render :action => 'edit'
+        else
+          render :partial => "/shared/admin/error_messages",
+                 :locals => {
+                   :object => @page,
+                   :include_object_name => true
+                 }
+        end
+      end
+    end
+    
+    
+    
   
   protected
-
+    
     # We can safely assume Refinery::I18n is defined because this method only gets
     # Invoked when the before_filter from the plugin is run.
     def globalize!

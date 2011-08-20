@@ -3,8 +3,7 @@ module Admin
     
     def new
       @prefix = "page[parts_attributes][#{params[:part_index]}]"
-      part = PagePart.new(:title => params[:title], :index => params[:part_index], :meta => {:type => params[:type]})
-      part.items << params[:type].constantize.new
+      part = PagePart.new(:page_id => params[:page_id], :title => params[:title], :index => params[:part_index], :meta => {:type => params[:type]})
       
       render :partial => "/admin/pages/insert_page_part_field", :locals => {
         :part => part,

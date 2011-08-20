@@ -8,6 +8,10 @@
   unless defined?(hide_cancel).presence
     hide_cancel = from_dialog?
   end
+  
+  unless defined?(show_preview).presence
+    show_preview = false
+  end
 
   unless hide_cancel
     cancel_button_text  ||= t('.cancel')
@@ -59,12 +63,15 @@
 
     <%= link_to("Preview", "/pages/#{f.object.id}/preview", 
                 :title => "Preview changes before saving", 
-                :class => "preview button") if f.present? && f.object.is_a?(Page) -%>
+                :class => "preview button") if show_preview -%>
 
     <%= link_to(cancel_button_text, cancel_url,
                 :title => cancel_title,
                 :id => cancel_button_id,
                 :class => "close_dialog button") unless hide_cancel %>
+    <span class="loading-spinner">
+      <%= image_tag "/images/refinery/ajax-loader.gif" %>
+    </span>
   </div>
   <div class='form-actions-right'>
     <%= link_to(delete_button_text, delete_url,
@@ -77,3 +84,9 @@
     <%= will_paginate paginate_collection, paginate unless paginate_collection.nil? %>
   </div>
 </div>
+
+<% content_for :javascripts do %>
+<script type="text/javascript" charset="utf-8">
+  
+</script>
+<%end %>

@@ -690,7 +690,10 @@ var page_options = {
       resizable: false,
       autoOpen: false,
       width: 600,
-      height: 250
+      height: 250,
+      close: function() {
+        $(this).find(".loading-spinner").hide();
+      }
     });
 
     $('#add_page_part').click(function(e){
@@ -707,11 +710,13 @@ var page_options = {
         var tab_title = part_title.toLowerCase().replace(" ", "_");
 
         if ($('#part_' + tab_title).size() === 0) {
+          $(this).siblings(".loading-spinner").show();
           $.get(page_options.new_part_url, {
               title: part_title
               , part_index: $('#new_page_part_index').val()
               , body: ''
               , type: $('#new_page_part_meta_type').val()
+              , page_id: $("#new_page_part_page_id").val()
             }, function(data, status){
               $('#submit_continue_button').remove();
               // Add a new tab for the new content section.
