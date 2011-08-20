@@ -78,7 +78,43 @@ module Admin
         end
       end
     end
+    
+    def update
+      raise params[:image].inspect
+      if @image.update_attributes(params[:image])
+        (request.xhr? ? flash.now : flash).notice = t(
+          'refinery.crudify.updated',
+          :what => "'#{@image.title}'"
+        )
 
+        unless from_dialog?
+          unless params[:continue_editing] =~ /true|on|1/
+            redirect_back_or_default(admin_images_url)
+          else
+            unless request.xhr?
+              redirect_to :back
+            else
+              render :partial => "/shared/message"
+            end
+          end
+        else
+          render :text => "<script>parent.window.location = '#{admin_images_url}';</script>"
+        end
+      else
+        unless request.xhr?
+          render :action => 'edit'
+        else
+          render :partial => "/shared/admin/error_messages",
+                 :locals => {
+                   :object => @image,
+                   :include_object_name => true
+                 }
+        end
+      end
+    end
+
+
+    
   protected
   
     protected

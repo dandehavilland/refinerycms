@@ -43,6 +43,7 @@
     <%- [:h,:w,:x,:x2,:y,:y2].each do |dimension| %>
       <%= hidden_field "crop[dimensions]", dimension %>
     <% end -%>
+    <input type="hidden" name="crop_geometry" value="" />
   </div>
   <div class='field'>
     <div id="current_crop" class="crop_preview_image">
@@ -87,7 +88,7 @@
   var aspect_ratio, width, height, image;
 
   $(function() {
-
+    
     function update_aspect_ratio() {
       var sizes = $("[name=crop_size]").val().match(/([\d]{1,4})x([\d]{1,4}).*/);
       width = sizes[1];
@@ -143,7 +144,17 @@
           target_preview_left = (target_left / cropper_width) * target_preview_width,
           target_preview_right = (target_top / cropper_height) * target_preview_height;
       preview_image.css({left: -target_preview_left, top: -target_preview_right});
+      
+      var crop_str = target_left + ':' + target_top + ':' +
+                     dimensions.w + 'x' + dimensions.h +
+                     '=>'+width+'x'+height; 
+      $('[name=crop_geometry]').val(crop_str);
+      
+      console.log(crop_str);
+
     }
+    
+  
   
     $("[name=crop_size]").change(update_aspect_ratio);
     update_aspect_ratio();
