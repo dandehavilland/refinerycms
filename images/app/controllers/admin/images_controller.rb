@@ -7,7 +7,7 @@ module Admin
             :order => "created_at DESC",
             :sortable => false,
             :xhr_paging => true
-
+            
     before_filter :change_list_mode_if_specified, :init_dialog
     before_filter :verify_can_destroy, :only => :destroy
 
@@ -80,7 +80,6 @@ module Admin
     end
     
     def update
-      raise params[:image].inspect
       if @image.update_attributes(params[:image])
         (request.xhr? ? flash.now : flash).notice = t(
           'refinery.crudify.updated',

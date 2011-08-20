@@ -26,9 +26,11 @@ class Image < ActiveRecord::Base
   PAGES_PER_ADMIN_INDEX = 20
 
   # allows Mass-Assignment
-  attr_accessible :id, :image, :image_size
+  attr_accessible :id, :image, :image_size, :meta
 
   delegate :size, :mime_type, :url, :width, :height, :to => :image
+  
+  serialize :meta
 
   class << self
     # How many images per page should be displayed?
@@ -74,12 +76,8 @@ class Image < ActiveRecord::Base
     end
   end
   
-  def define_crop(geometry_name = nil, geometry_params = nil)
-    crops[key] = crop_geometry
-  end
-  
   def crops
-    (meta||={})[:crops] ||= {}
+    meta[:crops] rescue {}
   end
   
   # Returns a titleized version of the filename
@@ -90,9 +88,9 @@ class Image < ActiveRecord::Base
 
   protected
   def is_a_stored_geometry?(geometry)
-    geometry.is_a?(Symbol) and self.class.user_image_sizes.keys.include?(geometry)
+    self.class.user_image_sizes.keys.include?(geometry.to_sym)
   end
   def is_a_crop_geometry?(geometry)
-    geometry.is_a?(Symbol) and crops.include?(geometry)
+    crops.keys.map(&:to_sym).include?(geometry.to_sym)
   end
 end
