@@ -55,6 +55,28 @@ class Image < ActiveRecord::Base
     end
   end
 
+
+  def use_count
+    (items + events + locations).count
+  end
+  
+  def uses
+    {:items => items, :events => events, :locations => locations}
+  end
+  
+  def items
+    Item.where(:type => ["ImageItem","PressItem"]).where(%{meta LIKE '%image: "#{id}"%' OR meta LIKE "image: #{id}"})
+  end
+  
+  def events
+    Event.where(:image_id => id)
+  end
+  
+  def locations
+    locations = Location.arel_table
+    Location.where(locations[:image_id].eq(id).or(locations[:icon_id].eq(id)))
+  end
+  
   # Get a thumbnail job object given a geometry.
   def thumbnail(geometry = nil)
     
