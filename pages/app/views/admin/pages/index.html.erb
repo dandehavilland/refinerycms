@@ -2,7 +2,7 @@
   <% caching = RefinerySetting.find_or_set(:cache_pages_backend, false) %>
 
   <div class="locale_picker">
-    <%= render :partial => "locale_picker", :locals => {:current_locale => Refinery::I18n.current_locale} %>
+    <%= render :partial => "locale_picker", :locals => {:current_locale => Thread.current[:globalize_locale]} %>
   </div>
 
   <% cache_if(caching, [Refinery.base_cache_key, "pages_backend", Globalize.locale].join('_')) do %>
