@@ -118,7 +118,7 @@ module Admin
   
     protected
     def verify_can_destroy
-      if @image.uses.count > 0
+      if @image.use_count > 0
         flash[:error] = t('admin.images.image_in_use_can_not_delete')
         redirect_to :action => :index
       end
