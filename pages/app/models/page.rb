@@ -283,42 +283,6 @@ class Page < ActiveRecord::Base
 
   class << self
     
-    def create_with_parts(params={})
-      
-      if params[:page] && params[:page][:parts_attributes]
-        
-        part_ids = params[:page][:parts_attributes].each_pair.map do |part_idx, part_attrs|
-          
-          # first find or create the part we're attaching items to
-          part = if part_attrs[:id].present?
-            PagePart.find_or_create_with_items(part_attrs[:id])
-          else
-            PagePart.create!(part_attrs.merge(:items_attribtues=>nil))
-          end
-          
-          # assign the ID to our params for later
-          params[:page][:parts_attributes][part_idx][:id] = part.id
-          
-          
-          if part_attrs[:items_attributes]
-            part_attrs[:items_attributes].each_pair do |item_idx, item_attrs|
-              if item_attrs[:id].present?
-                item = Item.find(item_attrs[:id])
-                part.items << item unless parts.include?(item)
-              end
-            end
-            part.save
-          end
-          
-          part.id
-        end
-        
-        params[:page][:parts_attributes] = nil
-        return Page.create(params[:page])
-      end
-    end
-    
-    
     # Accessor to find out the default page parts created for each new page
     def default_parts
       RefinerySetting.find_or_set(:default_page_parts, ["Body", "Side Body"])
