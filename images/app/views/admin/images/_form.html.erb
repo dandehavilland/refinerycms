@@ -43,8 +43,25 @@
     <%- [:h,:w,:x,:x2,:y,:y2].each do |dimension| %>
       <%= hidden_field "crop[dimensions]", dimension %>
     <% end -%>
-    <input type="hidden" name="crop_geometry" value="" />
+    <input type="hidden" name="crop[original][width]" value="<%=@image.width%>" />
+    <input type="hidden" name="crop[original][height]" value="<%=@image.height%>" />
   </div>
+  
+  <div class='field'>
+    <label for="crops_list">Current custom crops</label>
+    <ul id="crops_list">
+      <% @image.crops.each_pair do |key, crop_options| %>
+      <li id="<%=key.to_s%>" class="saved">
+      <% crop_options.each_pair do |k,v| %>
+        <input type="hidden" name="image[meta][crops][<%=key.to_s%>][<%=k%>]" value="<%=v%>" class="crop_geometry" />
+      <% end %>
+      <%= key.to_s.humanize %> 
+      (<a href="#" class="remove_crop">Remove</a> | <a href="#" class="revert_crop">Revert</a>)
+      </li>
+      <% end %>
+    </ul>
+  </div>
+  
   <div class='field'>
     <div id="current_crop" class="crop_preview_image">
       <label>Current Crop</label>
@@ -85,81 +102,154 @@
   <%= javascript_include_tag 'jcrop.min' %>
   <%= stylesheet_link_tag 'jquery.jcrop' %>
   <script language="Javascript">
-  var aspect_ratio, width, height, image;
+  var aspect_ratio, width, height, image, cropper;
+  
+  function draw_cropbox(options) {
+    cropper = $('#cropbox').Jcrop($.extend({
+      setSelect: [ 240, 240, width, height ],
+      aspectRatio: aspect_ratio,
+      onChange: update_crop_values
+    },options));
+  }
+  
+  // set the selection area on the cropper
+  function set_selection(x,y,x2,y2) {
+    draw_cropbox({setSelect: [x,y,x2,y2]});
+  }
+  
+  function update() {
+    var sizes = $("[name=crop_size]").val().match(/([\d]{1,4})x([\d]{1,4}).*/);
+    width = sizes[1];
+    height = sizes[2];
+    aspect_ratio = width / height;
+    update_current_crop();
+    draw_cropbox({aspectRatio: aspect_ratio});
+  }
+  
+  // show the current crop for the selected size
+  function update_current_crop() {
+    var url = $("[name=crop_size] :selected").attr('rel');
+    $("#current_crop img").attr('src', url);
+  }
+  
+  // update the form submission values for the current crop
+  function update_crop_values(dimensions) {
+    for (var param in dimensions)
+      $("[name='crop[dimensions]["+param+"]']").attr('value', dimensions[param]);
+  
+    update_preview_and_crops_list(dimensions);
+  }
+  
+  // resize and reposition the preview image and the crops list
+  function update_preview_and_crops_list(dimensions) {
+    var cropper_image = $("#cropbox"),
+        cropper_width = cropper_image.width(),
+        cropper_height = cropper_image.height();
+  
+    var target_width = dimensions.w,
+        target_height = dimensions.h;
+  
+    // set the size of the preview container to that selected in the drop-down
+    var preview_container = $(".crop_preview_wrapper");
+    preview_container.css({width: width, height: height});
+  
+    // set the size of the preview image to proportionally match the crop
+    var preview_image = $("img", preview_container),
+        preview_image_width = preview_image.width(),
+        preview_image_height = preview_image.height();
+  
+    var target_preview_width = (width / target_width) * cropper_width,
+        target_preview_height = (height / target_height) * cropper_height;
+  
+    preview_image.attr('width', target_preview_width).attr('height', target_preview_height);
+  
+    // reposition the preview image to refelct the start of the crop
+    var target_left = dimensions.x,
+        target_top = dimensions.y,
+        target_preview_left = (target_left / cropper_width) * target_preview_width,
+        target_preview_top = (target_top / cropper_height) * target_preview_height;
+    preview_image.css({left: -target_preview_left, top: -target_preview_top});
+    
+    var original_width = parseInt($("[name='crop[original][width]']").val(),10),
+        original_height = parseInt($("[name='crop[original][height]']").val(),10);
+        
+        // console.log(dimensions.w, cropper_width, original_width);
+    
+    var crop_left = Math.round((target_left / cropper_width) * original_width),
+        crop_top = Math.round((target_top / cropper_height) * original_height),
+        crop_width = Math.round((dimensions.w / cropper_width) * original_width),
+        crop_height = Math.round((dimensions.h / cropper_height) * original_height);
+    
+    var crop = {
+      resize: Math.round(target_preview_width)+"x"+Math.round(target_preview_height),
+      x: Math.round(target_preview_left), width: Math.round(width),
+      y: Math.round(target_preview_top), height: Math.round(height)
+    }
 
-  $(function() {
-    
-    function update_aspect_ratio() {
-      var sizes = $("[name=crop_size]").val().match(/([\d]{1,4})x([\d]{1,4}).*/);
-      width = sizes[1];
-      height = sizes[2];
-      aspect_ratio = width / height;
-    
-      $('#cropbox').Jcrop({
-        setSelect: [ 240, 240, width, height ],
-        aspectRatio: aspect_ratio,
-        onChange: update_crop_values
-      });
-    
-      update_current_crop();
-    }
+    update_crops_list($("[name=crop_size] :selected").html(), crop);
+  }
   
-    function update_current_crop() {
-      var url = $("[name=crop_size] :selected").attr('rel');
-      $("#current_crop img").attr('src', url);
-    }
-  
-    function update_crop_values(dimensions) {
-      for (var param in dimensions)
-        $("[name='crop[dimensions]["+param+"]']").attr('value', dimensions[param]);
+  // update the list of submission values for the form
+  function update_crops_list(crop_name, crop_value) {
+    $('[name=crop_geometry_value]').val(crop_value);
+    $('[name=crop_geometry_name]').val(crop_name);
     
-      update_preview(dimensions);
-    }
-  
-    function update_preview(dimensions) {
-      var cropper_image = $("#cropbox"),
-          cropper_width = cropper_image.width(),
-          cropper_height = cropper_image.height();
+    var crop_name_id = crop_name.toLowerCase().replace(/\s/g, "_");
     
-      var target_width = dimensions.w,
-          target_height = dimensions.h;
+    var crops_list = $("#crops_list");
+    var this_crop = $("#"+crop_name_id);
     
-      // set the size of the preview container to that selected in the drop-down
-      var preview_container = $(".crop_preview_wrapper");
-      preview_container.css({width: width, height: height});
-    
-      // set the size of the preview image to proportionally match the crop
-      var preview_image = $("img", preview_container),
-          preview_image_width = preview_image.width(),
-          preview_image_height = preview_image.height();
-    
-      var target_preview_width = (width / target_width) * cropper_width,
-          target_preview_height = (height / target_height) * cropper_height;
-    
-      preview_image.attr('width', target_preview_width).attr('height', target_preview_height);
-    
-      // reposition the preview image to refelct the start of the crop
-      var target_left = dimensions.x,
-          target_top = dimensions.y,
-          target_preview_left = (target_left / cropper_width) * target_preview_width,
-          target_preview_right = (target_top / cropper_height) * target_preview_height;
-      preview_image.css({left: -target_preview_left, top: -target_preview_right});
+    if (this_crop.length > 0) {
       
-      var crop_str = target_left + ':' + target_top + ':' +
-                     dimensions.w + 'x' + dimensions.h +
-                     '=>'+width+'x'+height; 
-      $('[name=crop_geometry]').val(crop_str);
+      for (var key in crop_value) {
+        var field = this_crop.find(".crop_geometry[name='image[meta][crops]["+crop_name_id+"]["+key+"]']");
+        if (this_crop.hasClass("saved"))
+          field.data("original", field.val());
+        field.attr('value', crop_value[key]);
+      }
       
-      console.log(crop_str);
-
+    } else {
+      var new_crop_geom = $("<li id='"+crop_name_id+"'>"+crop_name+" (<a class='remove_crop' href='#'>Remove<a/>)</li>");
+      
+      for (var key in crop_value) {
+        var val = $("<input type='hidden' class='crop_geometry' />").attr("name", "image[meta][crops]["+crop_name_id+"]["+key+"]").attr('value', crop_value[key]);
+        new_crop_geom.append(val);
+      }
+      
+      crops_list.append(new_crop_geom);
     }
+  }
+  
+  // initialize
+  function initialize_cropper() {
+    // set listener on select box
+    $("[name=crop_size]").change(update);
+    update();
     
+    $(".revert_crop").live('click', function() {
+      var fields = $(this).siblings(".crop_geometry");
+      if (fields.first().data("original")) {
+        if (confirm("Are you sure you want to revert this crop to the previously saved version?")) {
+          fields.each(function(idx, f) {
+            f.attr('value', field.data("original"));
+          });
+        }
+      } else {
+        alert("You haven't yet made any changes to this crop");
+      }
+      return false;
+    });
+    
+    $(".remove_crop").live("click", function() {
+      if (confirm("Are you sure you want to remove this crop and revert to the automatically generated crop?")) {
+        $(this).closest("li").remove();
+      }
+      return false;
+    });
+    
+  }
   
-  
-    $("[name=crop_size]").change(update_aspect_ratio);
-    update_aspect_ratio();
-  
-  });
+  $(initialize_cropper);
 
   </script>
   <% end %>

@@ -61,7 +61,7 @@ class Image < ActiveRecord::Base
     method = :thumb
     
     geometry = if is_a_crop_geometry?(geometry)
-      method = :convert
+      method = :crop
       self.crops[geometry]
     elsif is_a_stored_geometry?(geometry)
       self.class.user_image_sizes[geometry] 
@@ -70,7 +70,8 @@ class Image < ActiveRecord::Base
     end
     
     if geometry.present? and not geometry.is_a?(Symbol)
-      image.send method, geometry
+    
+      image.process method, geometry
     else
       image
     end
