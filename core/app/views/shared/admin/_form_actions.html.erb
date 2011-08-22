@@ -61,7 +61,7 @@
     <%= render :partial => "/shared/admin/continue_editing", :locals => {:f => f} if continue_editing -%>
     <%= hidden_field_tag :continue_editing, false if continue_editing %>
 
-    <%= link_to("Preview", "/pages/#{f.object.id}/preview", 
+    <%= link_to("Preview", "#", 
                 :title => "Preview changes before saving", 
                 :class => "preview button") if show_preview -%>
 
@@ -87,6 +87,15 @@
 
 <% content_for :javascripts do %>
 <script type="text/javascript" charset="utf-8">
-  
+  $(".preview.button").live('click', function() {
+    var form = $(this).closest('form');
+    var url = $(this).attr('href');
+    // remove pagepart references
+    var serialized = form.serialize().replace(/(\%?page\%5Bparts_attributes\%5D\%5B[\d]+\%5D\%5Bid\%5D\=[\d]+)/g, "");
+    // remove item references
+    var serialized = serialized.replace(/(\%?page\%5Bparts_attributes\%5D\%5B[\d]+\%5D\%5Bitems_attributes\%5D\%5B[\d]+\%5D\%5Bid\%5D\=[\d]+)/g, "");
+    window.open(url + "?" + serialized, "_refinery_preview");
+    return false;
+  });
 </script>
 <%end %>

@@ -1172,13 +1172,4 @@ iframed = function() {
 // preview page
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
-$(".preview.button").live('click', function() {
-  var form = $(this).closest('form');
-  var url = $(this).attr('href');
-  // remove pagepart references
-  var serialized = form.serialize().replace(/(\%?page\%5Bparts_attributes\%5D\%5B[\d]+\%5D\%5Bid\%5D\=[\d]+)/g, "");
-  // remove item references
-  var serialized = serialized.replace(/(\%?page\%5Bparts_attributes\%5D\%5B[\d]+\%5D\%5Bitems_attributes\%5D\%5B[\d]+\%5D\%5Bid\%5D\=[\d]+)/g, "");
-  window.open(url + "?" + serialized, "_refinery_preview");
-  return false;
-});
+
