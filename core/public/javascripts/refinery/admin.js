@@ -721,7 +721,7 @@ var page_options = {
               $('#submit_continue_button').remove();
               // Add a new tab for the new content section.
               $(data).appendTo('#page_part_editors');
-              page_options.tabs.tabs('add', '#page_part_new_' + $('#new_page_part_index').val(), part_title);
+              page_options.tabs.tabs('add', '#page_part_new_' + $('#new_page_part_index').val(), part_title+" ("+$('#new_page_part_meta_type').val().replace("Item","")+")");
               page_options.tabs.tabs('select', $('#new_page_part_index').val());
 
               // hook into wymedtior to instruct it to select this new tab again once it has loaded.
