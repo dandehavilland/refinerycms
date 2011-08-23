@@ -11,6 +11,10 @@
       <li><%= value %></li>
     <% end %>
   <% end %>
+  
+  <% (local_assigns[:invalid_parts]||[]).each do |part| %>
+    <li>Part "<%=part.title%> (<%=part.item_type%>)" also has errors.</li>
+  <% end %>
   </ul>
 </div>
 <% end %>

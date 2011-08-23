@@ -54,13 +54,18 @@ module Admin
           render :text => "<script>parent.window.location = '#{admin_pages_path}';</script>"
         end
       else
+        
+        invalid_parts = @page.parts.reject {|part|
+          part.valid? && items.all?(&:valid?) }
+        
         unless request.xhr?
-          render :action => 'new'
+          render :action => 'new', :locals => {:invalid_parts => invalid_parts}
         else
           render :partial => "/shared/admin/error_messages",
                  :locals => {
                    :object => @page,
-                   :include_object_name => true
+                   :include_object_name => true, 
+                   :invalid_parts => invalid_parts
                  }
         end
       end
