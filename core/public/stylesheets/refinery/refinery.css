@@ -1671,6 +1671,7 @@ ul.items .item.record .record_fields {
 
 .add_item_dialog table {
   width: 100%;
+  margin-bottom: 36px;
   border-collapse:collapse;
   border-spacing: 0;
 }
