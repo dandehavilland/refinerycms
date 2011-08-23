@@ -109,7 +109,7 @@ class Page < ActiveRecord::Base
   # rejects any page that has not been translated to the current locale.
   # This works using a query against the translated content first and then
   # using all of the page_ids we further filter against this model's table.
-  scope :in_menu, proc { where(:show_in_menu => true).with_globalize }
+  scope :in_menu, proc { where(:show_in_menu => true) }
 
   # Am I allowed to delete this page?
   # If a link_url is set we don't want to break the link so we don't allow them to delete
