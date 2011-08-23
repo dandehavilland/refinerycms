@@ -7,7 +7,7 @@ class PagePart < ActiveRecord::Base
   validates :title, :presence => true
   alias_attribute :content, :body
 
-  translates :body if respond_to?(:translates)
+  translates :body, :fallbacks_for_empty_translations => true if respond_to?(:translates)
 
   def to_param
     "page_part_#{title.downcase.gsub(/\W/, '_')}_#{id}"
