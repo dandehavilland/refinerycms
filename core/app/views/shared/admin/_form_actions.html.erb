@@ -61,7 +61,7 @@
     <%= render :partial => "/shared/admin/continue_editing", :locals => {:f => f} if continue_editing -%>
     <%= hidden_field_tag :continue_editing, false if continue_editing %>
 
-    <%= link_to("Preview", preview_page_path(f.object.id), 
+    <%= link_to("Preview", "#", 
                 :title => "Preview changes before saving", 
                 :class => "preview button") if show_preview -%>
 
