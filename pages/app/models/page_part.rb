@@ -10,7 +10,7 @@ class PagePart < ActiveRecord::Base
   translates :body if respond_to?(:translates)
 
   def to_param
-    "page_part_#{title.downcase.gsub(/\W/, '_')}"
+    "page_part_#{title.downcase.gsub(/\W/, '_')}_#{id}"
   end
 
   before_save :normalise_text_fields
