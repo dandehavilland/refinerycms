@@ -121,10 +121,14 @@
     }
     $.post(url, serialized, function(data) {
       var win = window.open('_blank');
-      with(win.document) {
-        open();
-        write(data);
-        close();
+      try {
+        with(win.document) {
+          open();
+          write(data);
+          close();
+        }
+      } catch (error) {
+        alert("The preview could not be displayed. Please ensure your pop-up blocker is set to allow pop-ups from this site.");
       }
     });
     return false;
