@@ -1,7 +1,7 @@
 ::Refinery::Application.routes.draw do
   get '/pages/:id', :to => 'pages#show', :as => :page
-  get '/pages/:id/preview', :to => 'pages#preview', :as => :preview_page
-
+  match '/pages/:id/preview' => 'admin/pages#preview', :method => :post
+  
   scope(:path => 'refinery', :as => 'admin', :module => 'admin') do
     resources :pages, :except => :show do
       collection do

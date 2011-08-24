@@ -1,4 +1,7 @@
 <%
+
+  actions_id = (local_assigns.inspect.hash**2).to_s[0,5]
+  
   unless (hide_submit ||= false)
     submit_button_text  ||= t('.save')
     submit_button_id    ||= "submit_button"
@@ -50,7 +53,7 @@
 <input type='hidden' name='dialog' value='true' />
 <% end %>
 
-<div class='form-actions<%= ' form-actions-dialog' if from_dialog? %>'>
+<div id="form-actions-<%=actions_id%>" class='form-actions<%= ' form-actions-dialog' if from_dialog? %>'>
   <div class='form-actions-left'>
     <%= submit_tag submit_button_text,
                    :id => submit_button_id,
@@ -61,7 +64,7 @@
     <%= render :partial => "/shared/admin/continue_editing", :locals => {:f => f} if continue_editing -%>
     <%= hidden_field_tag :continue_editing, false if continue_editing %>
 
-    <%= link_to("Preview", "#", 
+    <%= link_to("Preview", "/pages/#{f.object.id}/preview",
                 :title => "Preview changes before saving", 
                 :class => "preview button") if show_preview -%>
 
@@ -87,14 +90,43 @@
 
 <% content_for :javascripts do %>
 <script type="text/javascript" charset="utf-8">
-  $(".preview.button").live('click', function() {
+  // Thanks to Tobias Cohen (http://stackoverflow.com/questions/1184624/serialize-form-to-json-with-jquery
+  $.fn.serializeObject = function(){
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || '');
+          } else {
+              o[this.name] = this.value || '';
+          }
+      });
+      return o;
+  };
+
+
+  $("#form-actions-<%=actions_id%> .preview.button").live('click', function() {
     var form = $(this).closest('form');
     var url = $(this).attr('href');
+    
     // remove pagepart references
-    var serialized = form.serialize().replace(/(\%?page\%5Bparts_attributes\%5D\%5B[\d]+\%5D\%5Bid\%5D\=[\d]+)/g, "");
-    // remove item references
-    var serialized = serialized.replace(/(\%?page\%5Bparts_attributes\%5D\%5B[\d]+\%5D\%5Bitems_attributes\%5D\%5B[\d]+\%5D\%5Bid\%5D\=[\d]+)/g, "");
-    window.open(url + "?" + serialized, "_refinery_preview");
+    var serialized = form.serializeObject();
+    for (var key in serialized) {
+      if (key.match(/\[id\]$/)) {
+        delete serialized[key];
+      }
+    }
+    $.post(url, serialized, function(data) {
+      var win = window.open('_blank');
+      with(win.document) {
+        open();
+        write(data);
+        close();
+      }
+    });
     return false;
   });
 </script>

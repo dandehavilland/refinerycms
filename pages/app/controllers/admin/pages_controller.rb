@@ -104,8 +104,16 @@ module Admin
       end
     end
     
-    
-    
+    def preview
+      @menu_items = {
+        :locations => Page.location.in_menu.live.uniq,
+        :other => Page.top_level.in_menu.not_location.not_footer.live.uniq
+      }
+      @footer_items = Page.in_footer.in_menu.live.uniq
+      @language_items = Refinery::I18n.frontend_locales
+      @page = Page.new(params[:page])
+      render '/pages/show', :layout => "application"
+    end
   
   protected
     
