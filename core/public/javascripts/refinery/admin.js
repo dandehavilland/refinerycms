@@ -533,7 +533,6 @@ var link_dialog = {
 
   init_close: function(){
     $('.form-actions-dialog #cancel_button').not('.wym_iframe_body .form-actions-dialog #cancel_button').click(close_dialog);
-
     if (parent
         && parent.document.location.href != document.location.href
         && parent.document.getElementById('wym_dialog_submit') != null) {
@@ -1173,3 +1172,33 @@ iframed = function() {
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
 
+// link dialog adapter/monkey patch
+$(".link_dialog_link").live('click', function(e) {
+  e.preventDefault();
+  var el = $(this);
+  var parent = el.closest(".field");
+  
+  var link_href_input = $("[name$='[link]']", parent);
+  var link_text_input = $("[name$='[link_text]']", parent);
+  var link_target_input = $("[name$='[link_target]']", parent);
+  
+  var form = $("<form>").attr({id: "wym_adapter", style: "display: none"});
+  form.append($("<input>").attr({type: "hidden", id: 'wym_href', value: link_href_input.val() }));
+  form.append($("<input>").attr({type: "hidden", id: 'wym_title', value: link_text_input.val() }));
+  form.append($("<input>").attr({type: "hidden", id: 'wym_target', value: link_target_input.val() }));
+  var submit_btn = $("<input>").attr("type", "submit").attr("id", 'wym_dialog_submit');
+  form.append(submit_btn);
+  parent.append(form);
+  
+  submit_btn.click(function(e) {
+    e.preventDefault();
+    link_href_input.attr('value', $("#wym_href").val());
+    link_text_input.attr('value', $("#wym_title").val());
+    link_target_input.attr('value', $("#wym_target").val());
+    
+    $(".link_information", parent).html(link_text_input.val()+" (<em>"+link_href_input.val()+((link_target_input.val() == "_blank") ? ", opening in a new window":"")+"</em>)");
+    
+    $(this).closest("form").remove();
+    close_dialog(e);
+  });
+});
