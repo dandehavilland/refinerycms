@@ -1173,32 +1173,52 @@ iframed = function() {
 // This file is automatically included by javascript_include_tag :defaults
 
 // link dialog adapter/monkey patch
+
+function update_link($parent,link,title,target) {
+  $parent.find("[name$='[link]']").attr('value',link);
+  $parent.find("[name$='[title]']").attr('value',title);
+  $parent.find("[name$='[target]']").attr('value',target);
+  
+  var $info_span = $parent.find(".link_information");
+  if (link == "") {
+    $info_span.html("No link selected");
+    $parent.find(".remove_link_button, .modify_link_button").hide();
+    $parent.find(".add_link_button").show();
+  } else {
+    $parent.find(".remove_link_button, .modify_link_button").show();
+    $parent.find(".add_link_button").hide();
+    $info_span.html(title+" (<em>"+link+((target == "_blank") ? ", opening in a new window":"")+"</em>)");
+  }
+}
+
 $(".link_dialog_link").live('click', function(e) {
   e.preventDefault();
   var el = $(this);
-  var parent = el.closest(".field");
+  var $parent = el.closest(".field");
   
-  var link_href_input = $("[name$='[link]']", parent);
-  var link_text_input = $("[name$='[link_text]']", parent);
-  var link_target_input = $("[name$='[link_target]']", parent);
+  var link_href_input = $("[name$='[link]']", $parent);
+  var link_title_input = $("[name$='[link_title]']", $parent);
+  var link_target_input = $("[name$='[link_target]']", $parent);
   
   var form = $("<form>").attr({id: "wym_adapter", style: "display: none"});
   form.append($("<input>").attr({type: "hidden", id: 'wym_href', value: link_href_input.val() }));
-  form.append($("<input>").attr({type: "hidden", id: 'wym_title', value: link_text_input.val() }));
+  form.append($("<input>").attr({type: "hidden", id: 'wym_title', value: link_title_input.val() }));
   form.append($("<input>").attr({type: "hidden", id: 'wym_target', value: link_target_input.val() }));
   var submit_btn = $("<input>").attr("type", "submit").attr("id", 'wym_dialog_submit');
   form.append(submit_btn);
-  parent.append(form);
+  $parent.append(form);
   
   submit_btn.click(function(e) {
     e.preventDefault();
-    link_href_input.attr('value', $("#wym_href").val());
-    link_text_input.attr('value', $("#wym_title").val());
-    link_target_input.attr('value', $("#wym_target").val());
-    
-    $(".link_information", parent).html(link_text_input.val()+" (<em>"+link_href_input.val()+((link_target_input.val() == "_blank") ? ", opening in a new window":"")+"</em>)");
-    
+    update_link($parent, $("#wym_href").val(), $("#wym_title").val(), $("#wym_target").val())
     $(this).closest("form").remove();
     close_dialog(e);
   });
+});
+
+$(".remove_link").live('click', function() {
+  $parent = $(this).closest('.field');
+  if (confirm("Are you sure you wish to remove this link?")) {
+    update_link($parent, "", "", "");
+  }
 });
