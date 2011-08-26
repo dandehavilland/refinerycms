@@ -12,7 +12,10 @@ class Page < ActiveRecord::Base
   PATH_SEPARATOR = " - "
 
   if self.respond_to?(:translates)
-    translates :title, :custom_title, :meta_keywords, :meta_description, :browser_title, :include => :seo_meta
+    translates :title, :custom_title, :meta_keywords, :meta_description, :browser_title, 
+      :include => :seo_meta, :fallbacks_for_empty_translations => RefinerySetting.find_or_set(:i18n_fallbacks_for_empty_translations, true, {
+        :scoping => 'refinery'
+      })
 
     # Set up support for meta tags through translations.
     if defined?(::Page::Translation)
