@@ -14,7 +14,13 @@ module Admin
     before_filter :restrict_access, :only => [:create, :update, :update_positions, :destroy], :if => proc {|c|
       ::Refinery.i18n_enabled?
     }
-
+    
+    def find_page
+      conditions = {:slugs => {:scope => params[:scope] }} unless params[:scope].nil?
+      @page = Page.where(conditions).find(params[:id], 
+        :include => [:slugs, :translations, :children])
+    end
+    
     def new
       @page = Page.new
       Page.default_parts.each_with_index do |page_part, index|
