@@ -18,7 +18,7 @@ gemspec
 # gem 'ruby-debug19'
 
 # For Heroku/s3:
-# gem 'fog'
+gem 'fog'
 
 # REFINERY CMS ================================================================
 # Anything you put in here will be overridden when the app gets updated.
