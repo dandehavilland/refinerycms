@@ -1,5 +1,7 @@
 class PagesController < ApplicationController
 
+  before_filter :find_page_by_path, :only => :show
+  
   # This action is usually accessed with the root path, normally '/'
   def home
     error_404 unless (@page = Page.where(:link_url => '/').first).present?
@@ -16,8 +18,6 @@ class PagesController < ApplicationController
   #   GET /about/mission
   #
   def show
-    @page = Page.find("#{params[:path]}/#{params[:id]}".split('/').last)
-
     if @page.try(:live?) || (refinery_user? && current_user.authorized_plugins.include?("refinery_pages"))
       # if the admin wants this to be a "placeholder" page which goes to its first child, go to that instead.
       if @page.skip_to_first_child && (first_live_child = @page.children.order('lft ASC').live.first).present?
@@ -36,4 +36,17 @@ class PagesController < ApplicationController
     render 'show'
   end
 
+  protected
+  def find_page_by_path
+    path_segments = "#{params[:path]}/#{params[:id]}".split('/')
+    
+    if path_segments.length == 1
+      @page = Page.find(path_segments.pop)
+    else
+      @page = Page.find(path_segments.shift)
+      while (path_segments.present?)
+        @page = @page.children.find(path_segments.shift)
+      end
+    end
+  end
 end

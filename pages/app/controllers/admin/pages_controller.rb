@@ -15,8 +15,15 @@ module Admin
       ::Refinery.i18n_enabled?
     }
     
+
     after_filter :update_users, :only => [:create, :update]
 
+    def find_page
+      conditions = {:slugs => {:scope => params[:scope] }} unless params[:scope].nil?
+      @page = Page.where(conditions).find(params[:id], 
+        :include => [:slugs, :translations, :children])
+    end
+    
     def new
       @page = Page.new
     end

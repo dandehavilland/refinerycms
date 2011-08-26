@@ -55,12 +55,12 @@ class Page < ActiveRecord::Base
 
   attr_accessor :locale # to hold temporarily
   validates :title, :presence => true
-
+  
   # Docs for acts_as_nested_set https://github.com/collectiveidea/awesome_nested_set
   acts_as_nested_set :dependent => :destroy # rather than :delete_all
-
+  
   # Docs for friendly_id http://github.com/norman/friendly_id
-  has_friendly_id :title, :use_slug => true,
+  has_friendly_id :title, :use_slug => true, :scope => :parent_id,
                   :default_locale => (::Refinery::I18n.default_frontend_locale rescue :en),
                   :reserved_words => %w(index new session login logout users refinery admin images wymiframe),
                   :approximate_ascii => RefinerySetting.find_or_set(:approximate_ascii, false, :scoping => "pages"),
@@ -109,7 +109,9 @@ class Page < ActiveRecord::Base
   # rejects any page that has not been translated to the current locale.
   # This works using a query against the translated content first and then
   # using all of the page_ids we further filter against this model's table.
-  scope :in_menu, proc { where(:show_in_menu => true) }
+  # including slugs remove duplication across branches when scope is in play
+  scope :in_menu, proc { where(:show_in_menu => true).with_globalize.includes(:slug).where('`slugs`.`scope` = `pages`.`parent_id` OR `slugs`.`scope` IS NULL') }
+
 
   # Am I allowed to delete this page?
   # If a link_url is set we don't want to break the link so we don't allow them to delete
@@ -240,7 +242,7 @@ class Page < ActiveRecord::Base
   end
 
   def cache_key
-    [Refinery.base_cache_key, ::I18n.locale, to_param].compact.join('/')
+    [Refinery.base_cache_key, ::I18n.locale, to_param, parent_id].compact.join('/')
   end
 
   # Returns true if this page is "published"

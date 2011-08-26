@@ -23,13 +23,13 @@ gemspec
 # REFINERY CMS ================================================================
 # Anything you put in here will be overridden when the app gets updated.
 
-# gem 'refinerycms', '~> 1.0.1'
+# gem 'refinerycms', '~> 1.0.4'
 
 group :development, :test do
   # To use refinerycms-testing, uncomment it (if it's commented out) and run 'bundle install'
   # Then, run 'rails generate refinerycms_testing' which will copy its support files.
   # Finally, run 'rake' to run the tests.
-  gem 'refinerycms-testing',    '~> 1.0.1'
+  gem 'refinerycms-testing',    '~> 1.0.4'
 end
 
 # END REFINERY CMS ============================================================
@@ -42,6 +42,9 @@ else
   gem 'sqlite3'
   gem 'mysql2', '~> 0.2.7'
 end
+
+gem 'rcov', :platform => :mri_18
+gem 'simplecov', :platform => :mri_19
 
 # END REFINERY CMS DEVELOPMENT ================================================
 

@@ -3,10 +3,10 @@
 
 Gem::Specification.new do |s|
   s.name              = %q{refinerycms-testing}
-  s.version           = %q{1.0.3}
+  s.version           = %q{1.0.4}
   s.summary           = %q{Testing plugin for Refinery CMS}
   s.description       = %q{This plugin adds the ability to run cucumber and rspec against the RefineryCMS gem while inside a RefineryCMS project}
-  s.date              = %q{2011-06-23}
+  s.date              = %q{2011-08-11}
   s.email             = %q{info@refinerycms.com}
   s.homepage          = %q{http://refinerycms.com}
   s.rubyforge_project = %q{refinerycms}
@@ -15,18 +15,18 @@ Gem::Specification.new do |s|
   s.require_paths     = %w(lib)
   s.executables       = %w()
 
-  s.add_dependency 'refinerycms-core', '= 1.0.3'
+  s.add_dependency 'refinerycms-core', '= 1.0.4'
   # RSpec
   s.add_dependency 'rspec-rails',       '~> 2.6'
+  s.add_dependency 'fuubar'
+  s.add_dependency 'rspec-instafail'
 
   # Cucumber
-  s.add_dependency 'capybara',          '>= 0.4.1.1'
+  s.add_dependency 'capybara',          '~> 1.0.0'
   s.add_dependency 'database_cleaner'
-  s.add_dependency 'cucumber-rails',    '>= 0.4'
-  s.add_dependency 'cucumber'
+  s.add_dependency 'cucumber-rails',    '~> 1.0.0'
   s.add_dependency 'launchy'
-  s.add_dependency 'gherkin'
-  s.add_dependency 'rack-test',         '~> 0.5.6'
+  s.add_dependency 'rack-test',         '>= 0.5.6'
   s.add_dependency 'json_pure'
 
   # Factory Girl
@@ -36,13 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'autotest'
   s.add_dependency 'autotest-rails'
   s.add_dependency 'autotest-notification'
-
-  # RCov
-  if RUBY_VERSION < '1.9'
-    s.add_dependency 'rcov'
-  else
-    s.add_dependency 'simplecov'
-  end
 
   s.files             = [
     '.rspec',
