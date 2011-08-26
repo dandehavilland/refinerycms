@@ -112,7 +112,15 @@ class Page < ActiveRecord::Base
   # including slugs remove duplication across branches when scope is in play
   scope :in_menu, proc { where(:show_in_menu => true).with_globalize.includes(:slug).where('`slugs`.`scope` = `pages`.`parent_id` OR `slugs`.`scope` IS NULL') }
 
-
+  class << self
+    def rebuild!
+      prev = ENV["MODEL"]
+      ENV["MODEL"]= "Page"
+      FriendlyId::TaskRunner.new.delete_slugs
+      FriendlyId::TaskRunner.new.make_slugs
+      ENV["MODEL"]=prev
+    end
+  end
   # Am I allowed to delete this page?
   # If a link_url is set we don't want to break the link so we don't allow them to delete
   # If deletable is set to false then we don't allow this page to be deleted. These are often Refinery system pages
