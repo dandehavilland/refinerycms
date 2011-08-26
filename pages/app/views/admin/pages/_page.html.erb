@@ -6,10 +6,13 @@
             (locales = page.translations.map(&:locale)).present? %>
         <span class='preview'>
           <% (::Refinery::I18n.frontend_locales).each do |locale| %>
-            <% image = "flags/#{locale}.png"%>
+            <% 
+            image = "flags/#{locale}.png"
+            translation = page.translations.where(:locale => locale).first
+            %>
             <%= link_to refinery_icon_tag(image, :size => '16x11'),
                         edit_admin_page_path(page, :switch_locale => locale),
-                        :class => "locale #{"missing_locale" unless page.translations.where(:locale => locale).first.title}" %>
+                        :class => "locale #{"missing_locale" unless translation.present? && translation.title}" %>
           <% end %>
         </span>
       <% end %>
