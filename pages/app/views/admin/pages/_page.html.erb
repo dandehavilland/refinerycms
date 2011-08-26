@@ -9,7 +9,7 @@
             <% image = "flags/#{locale}.png"%>
             <%= link_to refinery_icon_tag(image, :size => '16x11'),
                         edit_admin_page_path(page, :switch_locale => locale),
-                        :class => "locale #{"missing_locale" unless locales.include?(locale)}" %>
+                        :class => "locale #{"missing_locale" unless page.translations.where(:locale => locale).first.title}" %>
           <% end %>
         </span>
       <% end %>
