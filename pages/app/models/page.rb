@@ -12,7 +12,8 @@ class Page < ActiveRecord::Base
   PATH_SEPARATOR = " - "
 
   if self.respond_to?(:translates)
-    translates :title, :custom_title, :meta_keywords, :meta_description, :browser_title, :fallbacks_for_empty_translations => true, :include => :seo_meta
+    translates :title, :custom_title, :meta_keywords, :meta_description, :browser_title, 
+      :include => :seo_meta, :fallbacks_for_empty_translations => true
 
     # Set up support for meta tags through translations.
     if defined?(::Page::Translation)
