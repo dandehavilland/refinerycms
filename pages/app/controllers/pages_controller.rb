@@ -32,15 +32,6 @@ class PagesController < ApplicationController
   
   protected
   def find_page_by_path
-    path_segments = "#{params[:path]}/#{params[:id]}".split('/')
-    
-    if path_segments.length == 1
-      @page = Page.find(path_segments.pop)
-    else
-      @page = Page.find(path_segments.shift)
-      while (path_segments.present?)
-        @page = @page.children.find(path_segments.shift)
-      end
-    end
+    Page.find_by_path("#{params[:path]}/#{params[:id]}")
   end
 end

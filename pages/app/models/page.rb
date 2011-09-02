@@ -120,6 +120,22 @@ class Page < ActiveRecord::Base
       FriendlyId::TaskRunner.new.make_slugs
       ENV["MODEL"]=prev
     end
+    
+    
+    def find_by_path(path)
+      path_segments = path.split('/')
+      
+      if path_segments.length == 1
+        @page = Page.find(path_segments.pop)
+      else
+        @page = Page.find(path_segments.shift)
+        while (path_segments.present?)
+          @page = @page.children.find(path_segments.shift)
+        end
+      end
+      
+      @page
+    end
   end
   
   # Am I allowed to delete this page?
