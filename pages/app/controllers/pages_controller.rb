@@ -32,6 +32,6 @@ class PagesController < ApplicationController
   
   protected
   def find_page_by_path
-    Page.find_by_path("#{params[:path]}/#{params[:id]}")
+    @page = Page.find_by_path("#{params[:path]}/#{params[:id]}")
   end
 end

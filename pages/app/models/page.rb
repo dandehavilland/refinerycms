@@ -126,15 +126,15 @@ class Page < ActiveRecord::Base
       path_segments = path.split('/')
       
       if path_segments.length == 1
-        @page = Page.find(path_segments.pop)
+        page = Page.find(path_segments.pop)
       else
-        @page = Page.find(path_segments.shift)
+        page = Page.find(path_segments.shift)
         while (path_segments.present?)
-          @page = @page.children.find(path_segments.shift)
+          page = page.children.find(path_segments.shift)
         end
       end
       
-      @page
+      page
     end
   end
   
