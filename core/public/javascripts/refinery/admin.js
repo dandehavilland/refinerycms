@@ -1171,8 +1171,8 @@ iframed = function() {
 
 function update_link($parent,link,title,target) {
   $parent.find("[name$='[link]']").attr('value',link);
-  $parent.find("[name$='[title]']").attr('value',title);
-  $parent.find("[name$='[target]']").attr('value',target);
+  $parent.find("[name$='[link_title]']").attr('value',title);
+  $parent.find("[name$='[link_target]']").attr('value',target);
   
   var $info_span = $parent.find(".link_information");
   if (link == "") {
