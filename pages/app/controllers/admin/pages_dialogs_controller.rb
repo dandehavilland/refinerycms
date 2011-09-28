@@ -4,6 +4,7 @@ module Admin
   class PagesDialogsController < Admin::DialogsController
 
     def link_to
+      Thread.current[:globalize_locale] = ::Refinery::I18n.default_frontend_locale      
       @pages = Page.paginate :page => params[:page],
                              :conditions => {:parent_id => nil},
                              :order => 'position ASC',

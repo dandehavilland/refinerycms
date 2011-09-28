@@ -24,10 +24,12 @@ module Refinery
         app_images.configure_with(:rails) do |c|
           c.datastore.root_path = Rails.root.join('public', 'system', 'images').to_s
           # /system/images/refinery_is_awesome.jpg?job=BAhbB1sHOgZmIiMyMDEwLzA5LzAxL1NTQ19DbGllbnRfQ29uZi5qcGdbCDoGcDoKdGh1bWIiDjk0MngzNjAjYw
-          c.url_format = '/system/images/:basename.:format'
+          c.url_format = '/system/images/:prefix/:basename.:format'
           c.secret = RefinerySetting.find_or_set(:dragonfly_secret,
                                                 Array.new(24) { rand(256) }.pack('C*').unpack('H*').first)
         end
+        
+        app_images.server.url_format = '/system/images/:prefix/:basename.:format'
 
         if Refinery.s3_backend
           app_images.configure_with(:heroku, ENV['S3_BUCKET'])

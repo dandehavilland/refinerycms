@@ -2,6 +2,9 @@ module Admin
   class DialogsController < Admin::BaseController
 
     def show
+      
+      Thread.current[:globalize_locale] = ::Refinery::I18n.default_frontend_locale
+      
       @dialog_type = params[:id].downcase
 
       url_params = params.reject {|key, value| key =~ /(action)|(controller)/}
