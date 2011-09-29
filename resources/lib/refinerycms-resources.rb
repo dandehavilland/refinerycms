@@ -28,7 +28,7 @@ module Refinery
           # /system/images/BAhbB1sHOgZmIiMyMDEwLzA5LzAxL1NTQ19DbGllbnRfQ29uZi5qcGdbCDoGcDoKdGh1bWIiDjk0MngzNjAjYw
           # and adds the filename onto the end (say the file was 'refinery_is_awesome.pdf')
           # /system/images/BAhbB1sHOgZmIiMyMDEwLzA5LzAxL1NTQ19DbGllbnRfQ29uZi5qcGdbCDoGcDoKdGh1bWIiDjk0MngzNjAjYw/refinery_is_awesome.pdf
-          c.url_format = '/system/resources/:job/:basename.:format'
+          c.url_format = '/system/resources/:basename.:format'
           c.secret = RefinerySetting.find_or_set(:dragonfly_secret,
                                                  Array.new(24) { rand(256) }.pack('C*').unpack('H*').first)
         end
