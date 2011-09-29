@@ -1217,3 +1217,21 @@ $(".remove_link").live('click', function() {
     update_link($parent, "", "", "");
   }
 });
+
+// site publish button
+$(".publish_site").live('click', function() {
+  $element = $(this);
+  if ($element.hasClass('in_progress')) {
+    alert("The site is already being published.");
+  } else {
+    $.get($element.attr('href'), function(response) {
+      if (response == "true" || response == true) {
+        alert("The site is now being published. Please wait and we will send you an email when the process is complete.");
+      } else {
+        alert("Somebody else has already clicked publish. Please wait until the publish is complete.");
+      }
+    });
+  }
+  
+  return false;
+});

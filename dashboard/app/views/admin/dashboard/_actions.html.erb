@@ -1,7 +1,11 @@
 <ul>
   <% if Refinery::Plugins.active.names.include?("flat_caches") %>
     <li>
-      <%= link_to t('.publish_site'), "#", :class => "success_icon" %>
+      <% if FlatCache.bake_in_progress? %>
+      <%= link_to t('.publishing'), "#", :class => "success_icon publish_site in_progress" %>
+      <% else %>
+      <%= link_to t('.publish_site'), bake_admin_flat_caches_path, :class => "success_icon publish_site" %>
+      <% end %>
     </li>
   <% end %>
   <% if Refinery::Plugins.active.names.include?("refinery_pages") %>
