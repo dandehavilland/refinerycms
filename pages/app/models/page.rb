@@ -186,11 +186,11 @@ class Page < ActiveRecord::Base
   # For example if I had a "Contact" page I don't want it to just render a contact us page
   # I want it to show the Inquiries form so I can collect inquiries. So I would set the "link_url"
   # to "/contact"
-  def url
+  def url(locale=nil)
     if link_url.present?
       link_url_localised?
     elsif self.class.use_marketable_urls?
-      with_locale_param url_marketable
+      with_locale_param url_marketable(locale)
     elsif to_param.present?
       with_locale_param url_normal
     end
@@ -208,9 +208,9 @@ class Page < ActiveRecord::Base
     current_url
   end
 
-  def url_marketable
+  def url_marketable(locale=nil)
     # :id => nil is important to prevent any other params[:id] from interfering with this route.
-    url_normal.merge(:path => nested_url, :id => nil)
+    url_normal.merge(:path => nested_url(locale), :id => nil)
   end
 
   def url_normal
@@ -230,12 +230,22 @@ class Page < ActiveRecord::Base
   #
   #   ['about', 'mission']
   #
-  def nested_url
-    Rails.cache.fetch(url_cache_key) { uncached_nested_url }
+  def nested_url(locale=nil)
+    #Rails.cache.fetch(url_cache_key) { uncached_nested_url }
+    uncached_nested_url(locale)
   end
 
-  def uncached_nested_url
-    [parent.try(:nested_url), to_param].compact.flatten
+  def uncached_nested_url(locale=nil)
+    if (locale.nil?)
+      [parent.try(:nested_url), to_param].compact.flatten
+    else
+      prev_locale = Thread.current[:globalize_locale]
+      Thread.current[:globalize_locale] = locale
+      result = [parent ? parent.nested_url(locale) : nil, to_param].compact.flatten
+      Thread.current[:globalize_locale] = prev_locale
+      
+      result
+    end
   end
 
   # Returns the string version of nested_url, i.e., the path that should be generated
@@ -249,7 +259,7 @@ class Page < ActiveRecord::Base
   end
 
   def url_cache_key
-    [cache_key, 'nested_url'].join('#')
+    [cache_key, 'nested_url', I18n.locale].join('#')
   end
 
   def cache_key
