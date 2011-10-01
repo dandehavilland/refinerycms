@@ -9,6 +9,9 @@ en:
     refinery_dialogs:
       title: Dialogs
       description: Refinery dialogs plugin
+    refinery_generators:
+      title: Generators
+      description: Reginery generators plugin
   welcome:
     there_are_no_users: "There are no users yet, so we'll set you up first."
     remember_admin_location: "Remember your Refinery admin area is at:"

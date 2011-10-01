@@ -1231,6 +1231,7 @@ $(".publish_site").live('click', function() {
         alert("Somebody else has already clicked publish. Please wait until the publish is complete.");
       }
     });
+    $element.addClass('in_progress disabled').attr('href', '#');
   }
   
   return false;

@@ -75,7 +75,7 @@ module Admin
   protected
 
     def load_available_plugins_and_roles
-      @available_plugins = ::Refinery::Plugins.registered.in_menu.collect{|a|
+      @available_plugins = ::Refinery::Plugins.registered.collect{|a|
         {:name => a.name, :title => a.title}
       }.sort_by {|a| a[:title]}
 
