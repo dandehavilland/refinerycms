@@ -7,7 +7,7 @@ class SitemapController < ::Refinery::FastController
     respond_to do |format|
       format.xml do
         @locales = if ::Refinery.i18n_enabled?
-                     ::Refinery::I18n.frontend_locales
+                     ::Refinery::I18n.active_frontend_locales
                    else
                      [::I18n.locale]
                    end

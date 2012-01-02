@@ -33,6 +33,6 @@
     </span>
   </div>
   <ul class='nested'>
-    <%= render :partial => 'page', :collection => page.children %>
+    <%= render :partial => 'page', :collection => page.children.sort {|a,b| a.lft <=> b.lft } %>
   </ul>
 </li>
