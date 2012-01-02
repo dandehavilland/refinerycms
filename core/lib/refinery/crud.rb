@@ -30,7 +30,7 @@ module Refinery
         :per_page => false,
         :redirect_to_url => "admin_#{model_name.to_s.gsub('/', '_').pluralize}_url",
         :searchable => true,
-        :search_conditions => '',
+        :search_conditions => {},
         :sortable => true,
         :title_attribute => "title",
         :xhr_paging => false,
