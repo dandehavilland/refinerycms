@@ -26,7 +26,9 @@ class Resource < ActiveRecord::Base
   end
   
   def file_name=(filename)
-    write_attribute(:file_name, URI.decode(filename).unpack("U*").map{|c|c.chr}.join)
+    require 'iconv'
+    filename = Iconv.conv('ASCII//IGNORE', 'UTF8', URI.decode(filename))
+    write_attribute(:file_name, filename)
   end
   
   # Returns a titleized version of the filename
