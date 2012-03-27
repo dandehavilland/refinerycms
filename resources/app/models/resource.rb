@@ -24,7 +24,11 @@ class Resource < ActiveRecord::Base
   def type_of_content
     mime_type.split("/").join(" ")
   end
-
+  
+  def file_name=(filename)
+    write_attribute(:file_name, URI.decode(filename).unpack("U*").map{|c|c.chr}.join)
+  end
+  
   # Returns a titleized version of the filename
   # my_file.pdf returns My File
   def title
@@ -39,7 +43,7 @@ class Resource < ActiveRecord::Base
 
     def create_resources(params)
       resources = []
-
+      
       unless params.present? and params[:file].is_a?(Array)
         resources << create(params)
       else
