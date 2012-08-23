@@ -27,8 +27,8 @@ module Refinery
 
         c.send :include, Crud # basic create, read, update and delete methods
 
-        c.send :before_filter, :find_pages_for_menu,
-                               :show_welcome_page?
+        # c.send :before_filter, :show_welcome_page?, :find_pages_for_menu
+                               
 
         c.send :after_filter, :store_current_location!,
                               :if => Proc.new {|c| c.send(:refinery_user?) rescue false }
