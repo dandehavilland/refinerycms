@@ -21,7 +21,13 @@ module Admin
     def find_page
       conditions = {:slugs => {:scope => params[:scope] }} unless params[:scope].nil?
       @page = Page.where(conditions).find(params[:id], 
-        :include => [:slugs, :translations, :children])
+        :include => [{:parts => :items}, :slugs, :translations, :children])
+        # @page = Page.includes([{:parts => [:translations,{:items => :translations}]}, :slugs, :translations, :children])\
+        # .where(conditions)\
+        # .where(:slugs {:nam} => params[:id]).first
+        # .where("page_translations.locale = ?", I18n.locale)\
+        # .where("page_part_translations.locale = ?", I18n.locale)\
+        # .where("item_translations.locale = ?", I18n.locale)\
     end
     
     def new
@@ -117,7 +123,7 @@ module Admin
         :other => Page.top_level.in_menu.not_location.not_footer.live.uniq
       }
       @footer_items = Page.in_footer.in_menu.live.uniq
-      @language_items = Refinery::I18n.frontend_locales
+      @language_items = Refinery::I18n.locales_with_flags
       @page = Page.new(params[:page])
       render '/pages/show', :layout => "application"
     end

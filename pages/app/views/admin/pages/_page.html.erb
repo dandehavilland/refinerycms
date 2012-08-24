@@ -1,38 +1,41 @@
-<li class='clearfix record' id="<%= dom_id(page) -%>">
-  <div class='clearfix'>
-    <span class='title'>
-      <%= page.title_with_meta.html_safe %>
-      <% if ::Refinery.i18n_enabled? and ::Refinery::I18n.frontend_locales.many? and
-            (locales = page.translations.map(&:locale)).present? %>
-        <span class='preview'>
-          <% (::Refinery::I18n.frontend_locales).each do |locale| %>
-            <% 
-            image = "flags/#{locale}.png"
-            translation = page.translations.where(:locale => locale).first
-            %>
-            <%= link_to refinery_icon_tag(image, :size => '16x11'),
-                        edit_admin_page_path(page, :switch_locale => locale, :scope => page.parent_id),
-                        :class => "locale #{"missing_locale" unless translation.present? && translation.title}" %>
+<% cache "_page/#{page.id}/#{page.updated_at}/#{Thread.current[:globalize_locale]}/#{::Refinery::I18n.frontend_locales.hash}" do %>
+  <li class='clearfix record' id="<%= dom_id(page) -%>">
+    <div class='clearfix'>
+      <span class='title'>
+      
+          <%= page.title_with_meta.html_safe %>
+          <% if ::Refinery.i18n_enabled? and ::Refinery::I18n.frontend_locales.many? and
+                (locales = page.translations.map(&:locale)).present? %>
+            <span class='preview'>
+              <% (::Refinery::I18n.frontend_locales).each do |locale| %>
+                <% 
+                image = "flags/#{locale}.png"
+                translation = page.translations.where(:locale => locale).first
+                %>
+                <%= link_to refinery_icon_tag(image, :size => '16x11'),
+                            edit_admin_page_path(page, :switch_locale => locale, :scope => page.parent_id),
+                            :class => "locale #{"missing_locale" unless translation.present? && translation.title}" %>
+              <% end %>
+            </span>
           <% end %>
-        </span>
-      <% end %>
-    </span>
+      </span>
 
-    <span class='actions'>
-      <%= link_to refinery_icon_tag('application_go.png'), page.url,
-                  :target => "_blank",
-                  :link => page.url.inspect,
-                  :title => t('.view_live_html') %>
-      <%= link_to refinery_icon_tag('application_edit.png'), edit_admin_page_path(page, :scope => page.parent_id, :switch_locale => ::Refinery::I18n.default_frontend_locale),
-                  :title => t('edit', :scope => 'admin.pages') %>
-      <%= link_to refinery_icon_tag('delete.png'), admin_page_path(page, :scope => page.parent_id),
-                  :class => "cancel confirm-delete",
-                  :title => t('delete', :scope => 'admin.pages'),
-                  :confirm => t('message', :scope => 'shared.admin.delete', :title => page.title_with_meta.gsub(/\ ?<em>.*<\/em>/, "")),
-                  :method => :delete if page.deletable? %>
-    </span>
-  </div>
-  <ul class='nested'>
-    <%= render :partial => 'page', :collection => page.children.sort {|a,b| a.lft <=> b.lft } %>
-  </ul>
-</li>
+      <span class='actions'>
+        <%= link_to refinery_icon_tag('application_go.png'), page.url,
+                    :target => "_blank",
+                    :link => page.url.inspect,
+                    :title => t('.view_live_html') %>
+        <%= link_to refinery_icon_tag('application_edit.png'), edit_admin_page_path(page, :scope => page.parent_id, :switch_locale => ::Refinery::I18n.default_frontend_locale),
+                    :title => t('edit', :scope => 'admin.pages') %>
+        <%= link_to refinery_icon_tag('delete.png'), admin_page_path(page, :scope => page.parent_id),
+                    :class => "cancel confirm-delete",
+                    :title => t('delete', :scope => 'admin.pages'),
+                    :confirm => t('message', :scope => 'shared.admin.delete', :title => page.title_with_meta.gsub(/\ ?<em>.*<\/em>/, "")),
+                    :method => :delete if page.deletable? %>
+      </span>
+    </div>
+    <ul class='nested'>
+      <%= render :partial => 'page', :collection => page.children.sort {|a,b| a.lft <=> b.lft } %>
+    </ul>
+  </li>
+<% end %>
