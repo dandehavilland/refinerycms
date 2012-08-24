@@ -1,4 +1,4 @@
-<% cache "_page/#{page.id}/#{page.updated_at}/#{Thread.current[:globalize_locale]}/#{::Refinery::I18n.frontend_locales.hash}" do %>
+<% cache "_page/#{page.id}/#{page.updated_at}/#{Thread.current[:globalize_locale]}/#{::Refinery::I18n.frontend_locales.hash}", :expires_in => 10.days do %>
   <li class='clearfix record' id="<%= dom_id(page) -%>">
     <div class='clearfix'>
       <span class='title'>
