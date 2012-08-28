@@ -4,7 +4,7 @@ module Admin
     crudify :page,
             :conditions => nil, # only pages this users can access
             :order => "pages.lft ASC",
-            :include => [:slugs, :translations, :children, :users],
+            :include => [:slugs, :translations, :children, :users, :parts],
             :paging => false
 
     rescue_from FriendlyId::ReservedError, :with => :show_errors_for_reserved_slug
@@ -20,8 +20,8 @@ module Admin
 
     def find_page
       conditions = {:slugs => {:scope => params[:scope] }} unless params[:scope].nil?
-      @page = Page.where(conditions).find(params[:id], 
-        :include => [{:parts => :items}, :slugs, :translations, :children])
+      @page = Page.includes([:parts, :slugs, :translations, :children, :users]).\
+        where(conditions).find(params[:id])
         # @page = Page.includes([{:parts => [:translations,{:items => :translations}]}, :slugs, :translations, :children])\
         # .where(conditions)\
         # .where(:slugs {:nam} => params[:id]).first
@@ -90,6 +90,8 @@ module Admin
           'refinery.crudify.updated',
           :what => "'#{@page.title}'"
         )
+        
+        @page.touch
 
         unless from_dialog?
           unless params[:continue_editing] =~ /true|on|1/
