@@ -20,7 +20,7 @@ module Admin
 
     def find_page
       conditions = {:slugs => {:scope => params[:scope] }} unless params[:scope].nil?
-      @page = Page.includes([:parts, :slugs, :translations, :children, :users]).\
+      @page = Page.includes([:slugs, :translations, :children]).\
         where(conditions).find(params[:id])
         # @page = Page.includes([{:parts => [:translations,{:items => :translations}]}, :slugs, :translations, :children])\
         # .where(conditions)\
