@@ -36,8 +36,11 @@ module Admin
     
     def find_all_pages(conditions = {})
       conditions.merge!({"users.id" => current_user.id}) unless current_user.has_role?(:superuser)
-      @pages = Page.where(conditions).includes(
+      
+      @pages = ActiveRecord::Base.uncached do
+        Page.where(conditions).includes(
                     [:slugs, :translations, :children, :users]).order("pages.lft ASC")
+      end
     end
     
     def create
