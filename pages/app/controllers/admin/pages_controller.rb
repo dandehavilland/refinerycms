@@ -111,7 +111,7 @@ module Admin
         end
       else
         unless request.xhr?
-          redirect_to edit_admin_page_path(@page)
+          render :action => 'edit'
         else
           render :partial => "/shared/admin/error_messages",
                  :locals => {

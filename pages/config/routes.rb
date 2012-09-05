@@ -1,5 +1,6 @@
 ::Refinery::Application.routes.draw do
   get '/pages/:id', :to => 'pages#show', :as => :page
+  post '/pages/:id', :to => 'pages#update', :as => :page
   match '/pages/:id/preview' => 'admin/pages#preview', :method => :post
   
   scope(:path => 'refinery', :as => 'admin', :module => 'admin') do
