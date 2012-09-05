@@ -101,7 +101,7 @@ module Admin
             redirect_to admin_pages_path
           else
             unless request.xhr?
-              redirect_to :back
+              redirect_to edit_admin_page_path(@page, :scope => @page.parent_id)
             else
               render :partial => "/shared/message"
             end
