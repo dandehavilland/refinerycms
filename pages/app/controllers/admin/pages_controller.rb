@@ -110,15 +110,15 @@ module Admin
           render :text => "<script>parent.window.location = '#{admin_pages_path}';</script>"
         end
       else
-        unless request.xhr?
-          render :action => 'edit'
-        else
-          render :partial => "/shared/admin/error_messages",
-                 :locals => {
-                   :object => @page,
-                   :include_object_name => true
-                 }
-        end
+        # unless request.xhr?
+          # render :action => 'edit'
+        # else
+        render :partial => "/shared/admin/error_messages",
+               :locals => {
+                 :object => @page,
+                 :include_object_name => true
+               }
+        # end
       end
     end
     
