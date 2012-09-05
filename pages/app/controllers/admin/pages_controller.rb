@@ -98,7 +98,7 @@ module Admin
 
         unless from_dialog?
           unless params[:continue_editing] =~ /true|on|1/
-            redirect_back_or_default(admin_pages_path)
+            redirect_to admin_pages_path
           else
             unless request.xhr?
               redirect_to :back
