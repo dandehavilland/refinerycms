@@ -283,36 +283,36 @@ submit_and_continue = function(e, redirect_to) {
   }
 
   $('#continue_editing').val(true);
-  $('#flash').fadeOut(250);
+  // $('#flash').fadeOut(250);
 
-  $('.fieldWithErrors').removeClass('fieldWithErrors').addClass('field');
-  $('#flash_container .errorExplanation').remove();
-
-  $.post($('#continue_editing').get(0).form.action, $($('#continue_editing').get(0).form).serialize(), function(data) {
-    if (($flash_container = $('#flash_container')).length > 0) {
-      $flash_container.html(data);
-
-      $('#flash').css({'width': 'auto', 'visibility': null}).fadeIn(550);
-
-      $('.errorExplanation').not($('#flash_container .errorExplanation')).remove();
-
-      if ((error_fields = $('#fieldsWithErrors').val()) != null) {
-        $.each(error_fields.split(','), function() {
-          $("#" + this).wrap("<div class='fieldWithErrors' />");
-        });
-      } else if (redirect_to) {
-        window.location = redirect_to;
-      }
-
-      $('.fieldWithErrors:first :input:first').focus();
-
-      $('#continue_editing').val(false);
-
-      init_flash_messages();
-    }
-  });
-
-  e.preventDefault();
+  // $('.fieldWithErrors').removeClass('fieldWithErrors').addClass('field');
+  // $('#flash_container .errorExplanation').remove();
+  // 
+  // $.post($('#continue_editing').get(0).form.action, $($('#continue_editing').get(0).form).serialize(), function(data) {
+  //   if (($flash_container = $('#flash_container')).length > 0) {
+  //     $flash_container.html(data);
+  // 
+  //     $('#flash').css({'width': 'auto', 'visibility': null}).fadeIn(550);
+  // 
+  //     $('.errorExplanation').not($('#flash_container .errorExplanation')).remove();
+  // 
+  //     if ((error_fields = $('#fieldsWithErrors').val()) != null) {
+  //       $.each(error_fields.split(','), function() {
+  //         $("#" + this).wrap("<div class='fieldWithErrors' />");
+  //       });
+  //     } else if (redirect_to) {
+  //       window.location = redirect_to;
+  //     }
+  // 
+  //     $('.fieldWithErrors:first :input:first').focus();
+  // 
+  //     $('#continue_editing').val(false);
+  // 
+  //     init_flash_messages();
+  //   }
+  // });
+  // 
+  // e.preventDefault();
 };
 
 init_tooltips = function(args){
@@ -1170,9 +1170,11 @@ iframed = function() {
 // link dialog adapter/monkey patch
 
 function update_link($parent,link,title,target) {
-  $parent.find("[name$='[link]']").attr('value',link);
-  $parent.find("[name$='[link_title]']").attr('value',title);
-  $parent.find("[name$='[link_target]']").attr('value',target);
+  $parent.find("[name$='[link]']").attr('value',link||"#");
+  $parent.find("[name$='[link_title]']").attr('value',title||"");
+  $parent.find("[name$='[link_target]']").attr('value',target||"");
+  
+  // update_encrypted_url($parent, link);
   
   var $info_span = $parent.find(".link_information");
   if (link == "") {
