@@ -1,6 +1,6 @@
 <% url_opts = action_name == 'edit' ? {:url => admin_page_path(@page.id)} : {} %>
 <%= form_for [:admin, @page], url_opts do |f| %>
-
+  <input type='hidden' name='scope' id='page_scope' value='<%= params[:scope] %>' />
   <%= render :partial => "/shared/admin/error_messages",
              :locals => {
                :object => @page,
