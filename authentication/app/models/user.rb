@@ -16,7 +16,10 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :plugins, :login
 
   validates :username, :presence => true, :uniqueness => true
-
+  
+  after_save :update_htaccess
+  before_destroy :remove_from_htaccess
+  
   class << self
     # Configure authentication_keys here instead of devise.rb initialzer so we don't overwrite standard devise models
     def authentication_keys
@@ -42,7 +45,7 @@ class User < ActiveRecord::Base
   end
 
   def authorized_plugins
-    plugins.collect { |p| p.name } | Refinery::Plugins.always_allowed.names
+    plugins.collect { |p| p.name } | Refinery::Plugins.always_allowed.map(&:name)
   end
 
   def can_delete?(user_to_delete = self)
@@ -61,5 +64,18 @@ class User < ActiveRecord::Base
     raise ArgumentException, "Role should be the title of the role not a role object." if title.is_a?(Role)
     roles.any?{|r| r.title == title.to_s.camelize}
   end
-
+  
+  protected
+  def update_htaccess
+    unless self.password.blank?
+      Rails.logger.info("Attempting to update BasicAuth password for '#{self.username}'")
+      `htpasswd -b #{Rails.root}/.htpasswd #{self.username} #{self.password}`
+    end
+  end
+  
+  def remove_from_htaccess
+    Rails.logger.info("Attempting to remove BasicAuth password for '#{self.username}'")
+    `htpasswd -D #{Rails.root}/.htpasswd #{self.username}`
+  end
+  
 end
