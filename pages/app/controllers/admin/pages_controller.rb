@@ -19,7 +19,7 @@ module Admin
     after_filter :update_users, :only => [:create, :update]
 
     def find_page
-      conditions = {:slugs => {:scope => params[:scope] }} unless params[:scope].nil?
+      conditions = {:slugs => {:scope => params[:scope] || nil }}# unless params[:scope].nil?
       @page = Page.includes([:slugs, :translations, :children]).\
         where(conditions).find(params[:id])
         # @page = Page.includes([{:parts => [:translations,{:items => :translations}]}, :slugs, :translations, :children])\
