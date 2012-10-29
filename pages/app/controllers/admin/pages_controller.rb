@@ -130,6 +130,18 @@ module Admin
       @footer_items = Page.in_footer.in_menu.live.uniq
       @language_items = Refinery::I18n.locales_with_flags
       @page = Page.new(params[:page])
+      
+      
+      # <oh dear>
+      # Preview relies on the parts_items relationships which have not yet
+      # been created, so this patch simulates them
+      @page.parts.each do |part|
+        part.parts_items.each do |parts_item|
+          part.items << parts_item.item
+        end
+      end
+      # </oh dear>
+      
       render '/pages/show', :layout => "application"
     end
   
