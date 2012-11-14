@@ -764,15 +764,23 @@ var page_options = {
 
     $('#delete_page_part').click(function(e){
       e.preventDefault();
-
-      if(confirm("This will remove the content section '" + $('#page_parts .ui-tabs-selected a').text() + "' immediately even if you don't save this page, are you sure?")) {
-        var tabId = page_options.tabs.tabs('option', 'selected');
+      
+      var tabIndex = page_options.tabs.tabs('option', 'selected');
+      
+      if(tabIndex > -1 && confirm("This will remove the content section '" + $('#page_parts .ui-tabs-selected a').text() + "' immediately even if you don't save this page, are you sure?")) {
+        var $tab = $(page_options.tabs.find('li').get(tabIndex));
+        var panelId = $tab.find('a').attr('href'); 
+        var partId = panelId.match(/\_([\d]+)$/)[1];
+        var $panel = $(panelId);
+        var $idField = $("input[id^='page_parts_attributes_'][value='"+partId+"']");
+        $idField.remove();
+        
         $.ajax({
-          url: page_options.del_part_url + '/' + $('#page_parts_attributes_' + tabId + '_id').val(),
+          url: page_options.del_part_url + '/' + partId,
           type: 'DELETE'
         });
-        page_options.tabs.tabs('remove', tabId);
-        $('#page_parts_attributes_' + tabId + '_id').remove();
+        page_options.tabs.tabs('remove', tabIndex);
+        $panel.remove();
         $('#submit_continue_button').remove();
       }
 
