@@ -38,7 +38,7 @@
     <label>Size:</label>
     <select name="crop_size"> 
     <%- RefinerySetting[:user_image_sizes].each_pair do |pair| %>
-    <option value="<%=pair.last%>" rel="<%=@image.thumbnail(pair.last).url%>"><%=pair.first.to_s.humanize%></option>
+    <option value="<%=pair.last%>" rel="<%=@image.thumbnail(pair.first).url(:prefix => pair.first)%>"><%=pair.first.to_s.humanize%></option>
     <% end -%>
     <%- [:h,:w,:x,:x2,:y,:y2].each do |dimension| %>
       <%= hidden_field "crop[dimensions]", dimension %>
@@ -102,11 +102,14 @@
   <%= javascript_include_tag 'jcrop.min' %>
   <%= stylesheet_link_tag 'jquery.jcrop' %>
   <script language="Javascript">
-  var aspect_ratio, width, height, image, cropper;
+  var aspect_ratio, width, height, image, cropper, x, scaled_x, y, scaled_y, meta, image_width, image_height;
+  
+  image_height = <%=@image.thumbnail("960x720>").height%>;
+  image_width = <%=@image.thumbnail("960x720>").width%>;
   
   function draw_cropbox(options) {
     cropper = $('#cropbox').Jcrop($.extend({
-      setSelect: [ 240, 240, width, height ],
+      setSelect: [ x, y, width, height ],
       aspectRatio: aspect_ratio,
       onChange: update_crop_values
     },options));
@@ -118,12 +121,22 @@
   }
   
   function update() {
-    var sizes = $("[name=crop_size]").val().match(/([\d]{1,4})x([\d]{1,4}).*/);
-    width = sizes[1];
-    height = sizes[2];
+    var $selected, ref;
+    
+    $selected = $("[name=crop_size] :selected");
+    
+    sizes = $selected.val().match(/([\d]{1,4})x([\d]{1,4}).*/);
+    width = parseInt(sizes[1],10);
+    height = parseInt(sizes[2],10);
+    
+    ref = $selected.text().replace(/\s/g, "_");
+    
     aspect_ratio = width / height;
+    
     update_current_crop();
-    draw_cropbox({aspectRatio: aspect_ratio});
+    
+    setup_for_crop(ref);
+    set_selection(scaled_x, scaled_y, scaled_x + (width * scale_ratio), scaled_y + (height * scale_ratio));
   }
   
   // show the current crop for the selected size
@@ -217,6 +230,31 @@
       }
       
       crops_list.append(new_crop_geom);
+    }
+  }
+  
+  // setup values for current crop
+  function setup_for_crop(crop_name) {
+    var key, sizes, scaled_width;
+    
+    key = "image[meta][crops]["+crop_name+"]";
+    size_ref = $("[name='"+key+"[resize]']").val();
+    
+    if (size_ref !== undefined && (sizes = size_ref.match(/([\d]{1,4})x([\d]{1,4}).*/))) {
+      scaled_width = parseInt(sizes[1],10);
+      scaled_height = parseInt(sizes[2],10);
+      
+      width = parseInt($("[name='"+key+"[width]']").val(),10);
+      height = parseInt($("[name='"+key+"[height]']").val(),10);
+      
+      x = parseInt($("[name='"+key+"[x]']").val(),10);
+      y = parseInt($("[name='"+key+"[y]']").val(),10);
+      
+      scale_ratio = image_width / scaled_width;
+      
+      scaled_x = (x / scaled_width) * image_width;
+      scaled_y = (y / scaled_height) * image_height;
+      
     }
   }
   
