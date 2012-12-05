@@ -56,7 +56,8 @@
         <input type="hidden" name="image[meta][crops][<%=key.to_s%>][<%=k%>]" value="<%=v%>" class="crop_geometry" />
       <% end %>
       <%= key.to_s.humanize %> 
-      (<a href="#" class="remove_crop">Remove</a> | <a href="#" class="revert_crop">Revert</a>)
+      (<a href="#" class="remove_crop">Remove</a>)
+       <!-- | <a href="#" class="revert_crop">Revert</a>) -->
       </li>
       <% end %>
     </ul>
