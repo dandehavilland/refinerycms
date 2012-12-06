@@ -103,7 +103,7 @@
   <%= javascript_include_tag 'jcrop.min' %>
   <%= stylesheet_link_tag 'jquery.jcrop' %>
   <script language="Javascript">
-  var aspect_ratio, width, height, image, cropper, x, scaled_x, y, scaled_y, meta, image_width, image_height;
+  var aspect_ratio, width, height, image, cropper, x, scaled_x, y, scaled_y, meta, image_width, image_height, scale_ratio=1;
   
   image_height = <%=@image.thumbnail("960x720>").height%>;
   image_width = <%=@image.thumbnail("960x720>").width%>;
