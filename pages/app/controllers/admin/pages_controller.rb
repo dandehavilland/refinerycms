@@ -19,15 +19,9 @@ module Admin
     after_filter :update_users, :only => [:create, :update]
 
     def find_page
-      conditions = {:slugs => {:scope => params[:scope] || nil }}# unless params[:scope].nil?
+      conditions = {:slugs => {:scope => params[:scope] || nil }}
       @page = Page.includes([:slugs, :translations, :children]).\
         where(conditions).find(params[:id])
-        # @page = Page.includes([{:parts => [:translations,{:items => :translations}]}, :slugs, :translations, :children])\
-        # .where(conditions)\
-        # .where(:slugs {:nam} => params[:id]).first
-        # .where("page_translations.locale = ?", I18n.locale)\
-        # .where("page_part_translations.locale = ?", I18n.locale)\
-        # .where("item_translations.locale = ?", I18n.locale)\
     end
     
     def new
@@ -98,7 +92,7 @@ module Admin
 
         unless from_dialog?
           unless params[:continue_editing] =~ /true|on|1/
-            redirect_to admin_pages_path
+            redirect_to redirect_path
           else
             unless request.xhr?
               redirect_to edit_admin_page_path(@page, :scope => @page.parent_id)
@@ -146,6 +140,10 @@ module Admin
     end
   
   protected
+  
+    def redirect_path
+      params[:redirect].present? ? (edit_admin_page_path(@page) + params[:redirect]) : admin_pages_path
+    end
     
     # We can safely assume Refinery::I18n is defined because this method only gets
     # Invoked when the before_filter from the plugin is run.

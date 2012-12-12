@@ -69,12 +69,14 @@ class User < ActiveRecord::Base
   def update_htaccess
     unless self.password.blank?
       Rails.logger.info("Attempting to update BasicAuth password for '#{self.username}'")
+      Rails.logger.info("-- htpasswd -b #{Rails.root}/.htpasswd #{self.username} #{self.password}")
       `htpasswd -b #{Rails.root}/.htpasswd #{self.username} #{self.password}`
     end
   end
   
   def remove_from_htaccess
     Rails.logger.info("Attempting to remove BasicAuth password for '#{self.username}'")
+    Rails.logger.info("htpasswd -D #{Rails.root}/.htpasswd #{self.username}")
     `htpasswd -D #{Rails.root}/.htpasswd #{self.username}`
   end
   

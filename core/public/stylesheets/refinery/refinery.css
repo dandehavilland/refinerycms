@@ -1436,23 +1436,35 @@ input.button.close_dialog:active, a.button.close_dialog:active, #content a.butto
   margin: 0px 12px 0px 0px;
   list-style: none;
 }
-#switch_locale_picker a {
+
+.flag_wrapper { 
+  width: 56px;
+}
+.flag_wrapper a.locale img {
+  display: block;
+  float: left;
+}
+
+#switch_locale_picker a,
+.field a.locale {
   border-bottom: 0px none;
 }
-#switch_locale_picker a img {
+#switch_locale_picker a img,
+.field a.locale img {
   border-width: 6px;
   border-style: solid;
   border-color: transparent;
   display: block;
 }
-#switch_locale_picker li.selected a img {
+#switch_locale_picker li.selected a img,
+.field a.locale.selected img {
   border-color: #22A7F2;
 }
 
 #content #records .title .preview a.locale {
   border-bottom: 0px none;
 }
-#content #records .title .preview a.missing_locale {
+a.missing_locale img {
   opacity: 0.2;
 }
 
@@ -1701,6 +1713,26 @@ ul.items .item.record .record_fields {
 .item textarea.widest {
   width: 600px;
 }
+
+.item input:disabled {
+  background-color: #ddd;
+  color: #777;
+}
+
+.item .field.fallback .wym_box {
+  display: none;
+}
+
+.item .wymeditor_fallback {
+  display: none;
+  opacity: 0.5;
+}
+
+.item.field.fallback .wymeditor_fallback {
+  display: block;
+}
+
+
 .loading-spinner {
   display: none;
   position: relative;
