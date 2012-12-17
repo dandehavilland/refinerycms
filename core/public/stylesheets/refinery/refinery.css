@@ -1714,7 +1714,8 @@ ul.items .item.record .record_fields {
   width: 600px;
 }
 
-.item input:disabled {
+.item input:disabled,
+.item textarea:disabled {
   background-color: #ddd;
   color: #777;
 }
