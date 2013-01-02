@@ -25,7 +25,7 @@
                   :target => "_blank",
                   :link => page.url.inspect,
                   :title => t('.view_live_html') %>
-      <%= link_to refinery_icon_tag('application_edit.png'), edit_admin_page_path(page, :scope => page.parent_id, :switch_locale => ::Refinery::I18n.default_frontend_locale),
+      <%= link_to refinery_icon_tag('application_edit.png'), edit_admin_page_path(page, :scope => page.parent_id, :switch_locale => Thread.current[:globalize_locale]),
                   :title => t('edit', :scope => 'admin.pages') %>
       <%= link_to refinery_icon_tag('delete.png'), admin_page_path(page, :scope => page.parent_id),
                   :class => "cancel confirm-delete",
