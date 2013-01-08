@@ -119,6 +119,21 @@
         delete serialized[key];
       }
     }
+    
+    // fill in the blanks with primary locale data
+    for (var key in serialized) {
+      if (serialized[key] == "false") {
+        $field = $("[name='"+key+"']");
+        if (key.match("\[image\]"))
+          serialized[key] = $field.data("fallback-id");
+        else
+          serialized[key] = $field.data("fallback");
+        
+        if (serialized[key] === undefined)
+          serialized[key] = "";
+      }
+    }
+    
     $.post(url, serialized, function(data) {
       var win = window.open('_blank');
       try {
