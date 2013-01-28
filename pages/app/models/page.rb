@@ -230,18 +230,19 @@ class Page < ActiveRecord::Base
   #
   #   ['about', 'mission']
   #
-  def nested_url(locale=nil)
-    #Rails.cache.fetch(url_cache_key) { uncached_nested_url }
-    uncached_nested_url(locale)
+  def nested_url(locale=:en)
+    Rails.cache.fetch(localised_cache_key(locale)) { 
+      uncached_nested_url(locale)
+    }
   end
 
-  def uncached_nested_url(locale=nil)
+  def uncached_nested_url(locale=:en)
     if (locale.nil?)
       [parent.try(:nested_url), to_param].compact.flatten
     else
       prev_locale = Thread.current[:globalize_locale]
       Thread.current[:globalize_locale] = locale
-      result = [parent ? parent.nested_url(locale) : nil, to_param].compact.flatten
+      result = [parent ? parent.try(:nested_url, locale) : parent.try(:nested_url), to_param].compact.flatten
       Thread.current[:globalize_locale] = prev_locale
       
       result
@@ -260,6 +261,10 @@ class Page < ActiveRecord::Base
 
   def url_cache_key
     [cache_key, 'nested_url', I18n.locale].join('#')
+  end
+  
+  def localised_cache_key locale=I18n.locale
+    [cache_key, 'nested_url', locale].join('#')
   end
 
   def cache_key
@@ -405,9 +410,10 @@ private
   def invalidate_cached_urls
     return true unless self.class.use_marketable_urls?
 
-    [self, children].flatten.each do |page|
+    [self_and_descendants].flatten.each do |page|
       Rails.cache.delete(page.url_cache_key)
       Rails.cache.delete(page.path_cache_key)
+      Rails.cache.delete(page.localised_cache_key)
     end
   end
   alias_method :invalidate_child_cached_url, :invalidate_cached_urls
