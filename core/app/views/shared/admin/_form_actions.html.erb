@@ -95,14 +95,24 @@
       var o = {};
       var a = this.serializeArray();
       $.each(a, function() {
-          if (o[this.name] !== undefined) {
-              if (!o[this.name].push) {
-                  o[this.name] = [o[this.name]];
-              }
-              o[this.name].push(this.value || '');
+        
+        // if this key already exists
+        if (o[this.name] !== undefined) {
+          
+          // if we don't have an array yet
+          if (!o[this.name].push) {
+            // and if the input name constitutes and array
+            if (this.name.match(/\[\]$/)) {
+              o[this.name] = [o[this.name], (this.value || '')];}
+            // otherwise, overwrite the existing value
+            else {
+              o[this.name] = this.value || '';}
           } else {
-              o[this.name] = this.value || '';
+            o[this.name].push(this.value || '');
           }
+        } else {
+          o[this.name] = this.value || '';
+        }
       });
       return o;
   };
