@@ -103,7 +103,6 @@ class Image < ActiveRecord::Base
     meta[:crops] rescue {}
   end
   
-
   # Intelligently works out dimensions for a thumbnail of this image based on the Dragonfly geometry string.
   def thumbnail_dimensions(geometry)
     geometry = geometry.to_s

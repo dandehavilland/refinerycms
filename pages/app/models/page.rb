@@ -112,7 +112,7 @@ class Page < ActiveRecord::Base
   # using all of the page_ids we further filter against this model's table.
   # including slugs remove duplication across branches when scope is in play
   scope :in_menu, proc { where(:show_in_menu => true) }
-
+  
   class << self
     def rebuild!
       prev = ENV["MODEL"]
