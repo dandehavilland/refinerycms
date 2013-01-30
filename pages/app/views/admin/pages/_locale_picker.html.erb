@@ -4,8 +4,9 @@
     <% locales.each do |locale| 
       li_klass = %w{}
       klass = %w{locale}
+      translation = @page.translations.with_locale(locale).first
       
-      klass << "missing_locale" if @page.present? && @page.translations.with_locale(locale).blank?
+      klass << "missing_locale" if @page.present? && translation.blank? || translation.title.blank?
       li_klass << "selected" if locale.to_s == local_assigns[:current_locale].to_s
       %>
       <li class="<%=li_klass.join(" ")%>">
