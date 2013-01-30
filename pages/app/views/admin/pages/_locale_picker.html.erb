@@ -5,7 +5,7 @@
       li_klass = %w{}
       klass = %w{locale}
       
-      klass << "missing_locale" if @page.present? && !@page.has_translation?(locale)
+      klass << "missing_locale" if @page.present? && @page.translations.with_locale(locale).blank?
       li_klass << "selected" if locale.to_s == local_assigns[:current_locale].to_s
       %>
       <li class="<%=li_klass.join(" ")%>">
