@@ -5,14 +5,8 @@
       li_klass = %w{}
       klass = %w{locale}
       
-      if @page.present?
-        translation = @page.translations.where(:locale => locale).first
-        klass << "missing_locale" unless translation.present? && translation.try(:title)
-      end
-      
-      if locale.to_s == local_assigns[:current_locale].to_s
-        li_klass << "selected"
-      end
+      klass << "missing_locale" if @page.present? && !@page.has_translation?(locale)
+      li_klass << "selected" if locale.to_s == local_assigns[:current_locale].to_s
       %>
       <li class="<%=li_klass.join(" ")%>">
         <%= link_to refinery_icon_tag("flags/#{locale}.png", :size => '16x11'),
