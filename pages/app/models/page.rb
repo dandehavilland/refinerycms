@@ -238,11 +238,11 @@ class Page < ActiveRecord::Base
 
   def uncached_nested_url(locale=:en)
     if (locale.nil?)
-      [parent.try(:nested_url), to_param].compact.flatten
+      [self.parent.try(:uncached_nested_url), to_param].compact.flatten
     else
       prev_locale = Thread.current[:globalize_locale]
       Thread.current[:globalize_locale] = locale
-      result = [parent ? parent.try(:nested_url, locale) : parent.try(:nested_url), to_param].compact.flatten
+      result = [self.parent.try(:uncached_nested_url, locale), to_param].compact.flatten
       Thread.current[:globalize_locale] = prev_locale
       
       result
