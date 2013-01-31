@@ -210,7 +210,7 @@ class Page < ActiveRecord::Base
 
   def url_marketable(locale=nil)
     # :id => nil is important to prevent any other params[:id] from interfering with this route.
-    url_normal.merge(:path => nested_url(locale), :id => nil)
+    url_normal.merge(:path => uncached_nested_url(locale), :id => nil)
   end
 
   def url_normal
