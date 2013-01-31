@@ -122,6 +122,10 @@
     var form = $(this).closest('form');
     var url = $(this).attr('href');
     
+    $.each(WYMeditor.INSTANCES, function(index, wym) {
+      wym.update();
+    });
+    
     // remove pagepart references
     var serialized = form.serializeObject();
     for (var key in serialized) {
