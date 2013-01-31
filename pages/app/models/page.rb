@@ -252,7 +252,9 @@ class Page < ActiveRecord::Base
   # Returns the string version of nested_url, i.e., the path that should be generated
   # by the router
   def nested_path
-    Rails.cache.fetch(path_cache_key) { ['', nested_url].join('/') }
+    # Rails.cache.fetch(path_cache_key) { 
+      ['', nested_url].join('/') 
+    # }
   end
 
   def path_cache_key
