@@ -32,7 +32,7 @@ module Refinery
 
           dimensions = (image.thumbnail_dimensions(geometry) rescue {})
 
-          image_tag(image.thumbnail(geometry).url, {
+          image_tag(image.thumbnail(geometry).url.force_encoding("UTF-8"), {
             :alt => image.respond_to?(:title) ? image.title : image.image_name,
           }.merge(dimensions).merge(options))
         end
