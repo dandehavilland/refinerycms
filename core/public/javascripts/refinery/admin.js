@@ -3,7 +3,7 @@ var initialLoad = true;
 $(document).ready(function(){
   init_interface();
   init_sortable_menu();
-  init_submit_continue();
+  // init_submit_continue();
   init_modal_dialogs();
   init_tooltips();
   init_ajaxy_pagination();
@@ -256,7 +256,7 @@ trigger_reordering = function(e, enable) {
 };
 
 init_submit_continue = function(){
-  $('#submit_continue_button').click(submit_and_continue);
+  // $('#submit_continue_button').click(submit_and_continue);
 
   $('form').change(function(e) {
     $(this).attr('data-changes-made', true);
@@ -273,47 +273,18 @@ init_submit_continue = function(){
   }
 };
 
-submit_and_continue = function(e, redirect_to) {
-  // ensure wymeditors are up to date.
-  if ($(this).hasClass('wymupdate')) {
-    $.each(WYMeditor.INSTANCES, function(index, wym)
-    {
-      wym.update();
-    });
-  }
-
-  $('#continue_editing').val(true);
-  // $('#flash').fadeOut(250);
-
-  // $('.fieldWithErrors').removeClass('fieldWithErrors').addClass('field');
-  // $('#flash_container .errorExplanation').remove();
-  // 
-  // $.post($('#continue_editing').get(0).form.action, $($('#continue_editing').get(0).form).serialize(), function(data) {
-  //   if (($flash_container = $('#flash_container')).length > 0) {
-  //     $flash_container.html(data);
-  // 
-  //     $('#flash').css({'width': 'auto', 'visibility': null}).fadeIn(550);
-  // 
-  //     $('.errorExplanation').not($('#flash_container .errorExplanation')).remove();
-  // 
-  //     if ((error_fields = $('#fieldsWithErrors').val()) != null) {
-  //       $.each(error_fields.split(','), function() {
-  //         $("#" + this).wrap("<div class='fieldWithErrors' />");
-  //       });
-  //     } else if (redirect_to) {
-  //       window.location = redirect_to;
-  //     }
-  // 
-  //     $('.fieldWithErrors:first :input:first').focus();
-  // 
-  //     $('#continue_editing').val(false);
-  // 
-  //     init_flash_messages();
-  //   }
-  // });
-  // 
-  // e.preventDefault();
-};
+// submit_and_continue = function(e, redirect_to) {
+//   // ensure wymeditors are up to date.
+//   if ($(this).hasClass('wymupdate')) {
+//     $.each(WYMeditor.INSTANCES, function(index, wym) { 
+//       wym.update();
+//     });
+//   }
+// 
+//   $('#continue_editing').val(true);
+//   
+//   
+// };
 
 init_tooltips = function(args){
   $($(args != null ? args : 'a[title], span[title], #image_grid img[title], *[tooltip]')).not('.no-tooltip').each(function(index, element)
